@@ -5,9 +5,9 @@ import com.wine.to.up.commonlib.annotations.InjectEventLogger;
 import com.wine.to.up.commonlib.logging.CommonNotableEvents;
 import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
-import com.wine.to.up.demo.service.api.dto.DemoServiceMessage;
-import com.wine.to.up.demo.service.api.message.KafkaMessageHeaderOuterClass;
-import com.wine.to.up.demo.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
+import com.wine.to.up.user.service.api.dto.UserServiceMessage;
+import com.wine.to.up.user.service.api.message.KafkaMessageHeaderOuterClass;
+import com.wine.to.up.user.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
 import com.wine.to.up.user.service.logging.UserServiceNotableEvents;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class KafkaController {
     @PostMapping(value = "/send")
     public void sendMessage(@RequestBody String message) {
         eventLogger.info(UserServiceNotableEvents.I_CONTROLLER_RECEIVED_MESSAGE, message);
-        sendMessageWithHeaders(new DemoServiceMessage(Collections.emptyMap(), message));
+        sendMessageWithHeaders(new UserServiceMessage(Collections.emptyMap(), message));
     }
 
     /**
@@ -70,7 +70,7 @@ public class KafkaController {
      * Sends message with headers
      */
     @PostMapping(value = "/send/headers")
-    public void sendMessageWithHeaders(@RequestBody DemoServiceMessage message) {
+    public void sendMessageWithHeaders(@RequestBody UserServiceMessage message) {
         AtomicInteger counter = new AtomicInteger(0);
         eventLogger.warn(UserServiceNotableEvents.W_SOME_WARN_EVENT, "Demo warning message");
 

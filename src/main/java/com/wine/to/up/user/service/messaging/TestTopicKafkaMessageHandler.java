@@ -1,7 +1,7 @@
 package com.wine.to.up.user.service.messaging;
 
 import com.wine.to.up.commonlib.messaging.KafkaMessageHandler;
-import com.wine.to.up.demo.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
+import com.wine.to.up.user.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
 import com.wine.to.up.user.service.domain.entity.Message;
 import com.wine.to.up.user.service.repository.MessageRepository;
 import lombok.extern.slf4j.Slf4j;

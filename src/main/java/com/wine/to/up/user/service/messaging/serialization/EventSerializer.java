@@ -1,6 +1,6 @@
 package com.wine.to.up.user.service.messaging.serialization;
 
-import com.wine.to.up.demo.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
+import com.wine.to.up.user.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
 import org.apache.kafka.common.serialization.Serializer;
 
 /**
