@@ -1,6 +1,7 @@
 package com.wine.to.up.user.service.domain.entity;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -36,7 +37,7 @@ public class User implements AbstractEntity<Long> {
     private String lastName;
 
     @Column(name = "BirthDate")
-    private Instant birthDate;
+    private LocalDate birthDate;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "Sex")
@@ -61,6 +62,9 @@ public class User implements AbstractEntity<Long> {
     @JoinColumn(name = "CompanyId")
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Company company;
+
+    @Column(name = "Password")
+    private String password;
 
     public enum Sex {
         MALE,

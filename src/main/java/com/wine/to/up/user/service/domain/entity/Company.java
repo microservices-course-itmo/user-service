@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @Table(name = "dim_company")
 public class Company implements AbstractEntity<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CompanyId")
     private Long id;
 
