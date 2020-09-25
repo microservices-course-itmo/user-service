@@ -18,3 +18,5 @@ gradlew*
 .DS_Store
 .classpath
 bin
+.editorconfig
+/**/application-dev.properties

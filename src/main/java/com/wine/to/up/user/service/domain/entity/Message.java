@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @NoArgsConstructor
-public class Message {
+public class Message implements AbstractEntity<UUID> {
     @Id
     private UUID id = UUID.randomUUID();
     private String content;
