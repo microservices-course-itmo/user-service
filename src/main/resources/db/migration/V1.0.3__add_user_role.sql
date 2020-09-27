@@ -1,11 +1,11 @@
 CREATE TABLE dim_role (
-    "RoleId"       bigserial         PRIMARY KEY,
-    "RoleName"     varchar,
-    "AccessToCatalog" boolean,
-    "CanComment" boolean,
-    "CanCreateCatalog" boolean,
-    "CanAddItem" boolean,
-    "CanLike" boolean
+    "RoleId"                bigserial         PRIMARY KEY,
+    "RoleName"              varchar,
+    "AccessToCatalog"       boolean,
+    "CanComment"            boolean,
+    "CanCreateCatalog"      boolean,
+    "CanAddItem"            boolean,
+    "CanLike"               boolean
 
 );
 
