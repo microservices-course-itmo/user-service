@@ -64,7 +64,7 @@ public class User implements AbstractEntity<Long> {
     private Company company;
 
     @JoinColumn(name = "RoleId")
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Role role;
 
     @Column(name = "Password")
