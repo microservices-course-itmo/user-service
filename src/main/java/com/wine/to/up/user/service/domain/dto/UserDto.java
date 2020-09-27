@@ -2,11 +2,12 @@ package com.wine.to.up.user.service.domain.dto;
 
 import com.wine.to.up.user.service.domain.entity.City;
 import com.wine.to.up.user.service.domain.entity.Company;
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
+import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,4 +25,5 @@ public class UserDto implements AbstractDto<Long> {
     private Boolean isActivated;
     private Instant createDate;
     private Company company;
+    private RoleDto role;
 }
