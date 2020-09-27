@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService extends AbstractService<Long, UserDto, User, UserRepository> {
+    private UserRepository userRepository;
+
     @Autowired
     public UserService(UserRepository repository, ModelMapper modelMapper) {
         super(repository, modelMapper);

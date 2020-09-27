@@ -53,7 +53,7 @@ public class User implements AbstractEntity<Long> {
     @JoinColumn(name = "CityId")
     private City city;
 
-    @Column(name = "IsActivated")
+    @Column(name = "isActivated")
     private Boolean isActivated;
 
     @Column(name = "CreateDate")
@@ -63,8 +63,9 @@ public class User implements AbstractEntity<Long> {
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Company company;
 
+    //TODO: optional
     @JoinColumn(name = "RoleId")
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Role role;
 
     @Column(name = "Password")
