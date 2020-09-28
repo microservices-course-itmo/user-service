@@ -77,7 +77,6 @@
             <artifactId>validation-api</artifactId>
         </dependency>
 
-
         <!--Our custom artifacts-->
         <dependency>
             <groupId>com.wine.to.up</groupId>
