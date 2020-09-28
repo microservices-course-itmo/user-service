@@ -18,8 +18,6 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@ToString
-@EqualsAndHashCode
 @Table(name = "dim_company")
 public class Company implements AbstractEntity<Long> {
     @Id
