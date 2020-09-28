@@ -10,8 +10,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@ToString
-@EqualsAndHashCode
 @Table(name = "dim_role")
 public class Role implements AbstractEntity<Long> {
     @Id

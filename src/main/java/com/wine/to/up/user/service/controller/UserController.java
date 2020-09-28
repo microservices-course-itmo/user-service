@@ -8,14 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST controller of the service
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-
 @Slf4j
+
 public class UserController {
     public final UserService userService;
 

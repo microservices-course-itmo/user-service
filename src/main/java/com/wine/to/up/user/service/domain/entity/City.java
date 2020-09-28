@@ -21,8 +21,6 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@ToString
-@EqualsAndHashCode
 @Table(name = "dim_city")
 public class City implements AbstractEntity<Long> {
     @Id
