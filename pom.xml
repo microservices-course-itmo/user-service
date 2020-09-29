@@ -15,10 +15,10 @@
     </parent>
 
     <properties>
-        <current-version>0.1.0</current-version>
+        <current-version>0.1.1</current-version>
 
         <service.commonlib.version>0.2.1-SNAPSHOT</service.commonlib.version>
-        <user.service.api.version>0.1.0</user.service.api.version>
+        <user.service.api.version>0.1.1</user.service.api.version>
 
     </properties>
 
