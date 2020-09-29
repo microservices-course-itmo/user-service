@@ -1,4 +1,4 @@
-package com.wine.to.up.user.service.service.impl;
+package com.wine.to.up.user.service.service;
 
 import com.wine.to.up.user.service.domain.dto.CompanyDto;
 import com.wine.to.up.user.service.domain.entity.Company;
