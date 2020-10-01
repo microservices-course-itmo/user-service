@@ -10,19 +10,18 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/users")
 @Slf4j
-
 public class UserController {
     public final UserService userService;
 
-    @GetMapping("/get")
-    public ResponseEntity<UserDto> findUserByID(@RequestParam Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> findUserByID(@PathVariable Long id) {
         UserDto user = userService.getById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
+    @PostMapping
     public void createUser(@RequestBody UserDto userData) {
         userService.create(userData);
     }
