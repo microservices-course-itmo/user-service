@@ -15,13 +15,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(exclude = {"city", "role", "company"})
+@ToString(exclude = {"city", "role", "company"})
 @Accessors(chain = true)
 @Table(name = "dim_user")
 public class User implements AbstractEntity<Long> {
