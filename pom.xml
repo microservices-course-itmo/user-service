@@ -7,7 +7,7 @@
     <groupId>com.wine.to.up</groupId>
     <artifactId>user-service</artifactId>
     <!--    "current-version" is used for building image and should not include a "SNAPSHOT" word. -->
-    <version>${current-version}-SNAPSHOT</version>
+    <version>${current-version}</version>
     <packaging>jar</packaging>
 
     <parent>
