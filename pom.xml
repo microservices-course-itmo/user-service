@@ -72,6 +72,18 @@
             <version>${postgres.driver.version}</version>
         </dependency>
 
+        <!-- Required: Swagger -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox-swagger-ui.version}</version>
+        </dependency>
+
         <!-- Recommended-->
         <dependency>
             <groupId>org.projectlombok</groupId>
