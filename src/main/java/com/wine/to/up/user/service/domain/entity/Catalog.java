@@ -1,11 +1,8 @@
 package com.wine.to.up.user.service.domain.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.List;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,13 +15,17 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@Table(name = "company")
-public class Company implements AbstractEntity<Long> {
+@Table(name = "catalog")
+public class Catalog implements AbstractEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @JoinColumn(name = "user_id")
+    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    private Long user_id;
+
+    @Column(name = "description")
+    private String description;
 }

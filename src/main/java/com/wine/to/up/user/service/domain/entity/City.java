@@ -21,13 +21,13 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@Table(name = "dim_city")
+@Table(name = "city")
 public class City implements AbstractEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CityId")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "CityName")
+    @Column(name = "name")
     private String name;
 }
