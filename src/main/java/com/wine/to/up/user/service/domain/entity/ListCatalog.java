@@ -19,11 +19,11 @@ public class ListCatalog implements AbstractEntity<Long> {
     @EmbeddedId
     private ListCatalogId id;
 
-    @JoinColumn(name = "catalog_id")
+    @JoinColumn(name = "catalog_id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Catalog catalog;
 
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Item item;
 }

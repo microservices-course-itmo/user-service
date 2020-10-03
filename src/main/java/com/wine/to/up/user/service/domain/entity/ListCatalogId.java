@@ -9,26 +9,26 @@ import java.util.Objects;
 public class ListCatalogId implements Serializable {
 
     @Column(name = "item_id")
-    private Long item_id;
+    private Long itemId;
 
     @Column(name = "catalog_id")
-    private Long catalog_id;
+    private Long catalogId;
 
     public ListCatalogId() {
 
     }
 
-    public ListCatalogId(Long item_id, Long catalog_id) {
-        this.item_id = item_id;
-        this.catalog_id = catalog_id;
+    public ListCatalogId(Long itemId, Long catalogId) {
+        this.itemId = itemId;
+        this.catalogId = catalogId;
     }
 
-    public Long getItem_id() {
-        return item_id;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public Long getCatalog_id() {
-        return catalog_id;
+    public Long getCatalogId() {
+        return catalogId;
     }
 
     @Override
@@ -36,12 +36,12 @@ public class ListCatalogId implements Serializable {
         if (this == o) return true;
         if (!(o instanceof ListCatalogId)) return false;
         ListCatalogId that = (ListCatalogId) o;
-        return Objects.equals(getItem_id(), that.getItem_id()) &&
-                Objects.equals(getCatalog_id(), that.getCatalog_id());
+        return Objects.equals(getItemId(), that.getItemId()) &&
+                Objects.equals(getCatalogId(), that.getCatalogId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getItem_id(), getCatalog_id());
+        return Objects.hash(getItemId(), getCatalogId());
     }
 }

@@ -9,39 +9,39 @@ import java.util.Objects;
 public class ListSubscriptionId implements Serializable {
 
     @Column(name = "item_id")
-    private Long item_id;
+    private Long itemId;
 
     @Column(name = "user_id")
-    private Long user_id;
+    private Long userId;
 
     public ListSubscriptionId() {
 
     }
 
-    public ListSubscriptionId(Long item_id, Long user_id) {
-        this.item_id = item_id;
-        this.user_id = user_id;
+    public ListSubscriptionId(Long itemId, Long userId) {
+        this.itemId = itemId;
+        this.userId = userId;
     }
 
-    public Long getItem_id() {
-        return item_id;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public Long getUserId() {
+        return userId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ListFavoriteId)) return false;
-        ListFavoriteId that = (ListFavoriteId) o;
-        return Objects.equals(getItem_id(), that.getItem_id()) &&
-                Objects.equals(getUser_id(), that.getUser_id());
+        if (!(o instanceof ListSubscriptionId)) return false;
+        ListSubscriptionId that = (ListSubscriptionId) o;
+        return Objects.equals(getItemId(), that.getItemId()) &&
+                Objects.equals(getUserId(), that.getUserId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getItem_id(), getUser_id());
+        return Objects.hash(getItemId(), getUserId());
     }
 }

@@ -10,7 +10,7 @@ CREATE TABLE city
     "name" varchar
 );
 
-CREATE TABLE user
+CREATE TABLE "user"
 (
     "id"           bigint PRIMARY KEY,
     "role_id"      bigint,
@@ -27,7 +27,7 @@ CREATE TABLE user
 
     CONSTRAINT fk_user_city_id FOREIGN KEY ("city_id") REFERENCES city ("id"),
     CONSTRAINT fk_user_company_id FOREIGN KEY ("company_id") REFERENCES company ("id"),
-    CONSTRAINT fk_user_role_id FOREIGN KEY ("role_id") REFERENCES role ("id") ON DELETE CASCADE
+    CONSTRAINT fk_user_role_id FOREIGN KEY ("role_id") REFERENCES role ("id")
 );
 
 CREATE TABLE role
@@ -42,7 +42,7 @@ CREATE TABLE catalog
   "user_id" bigint,
   "description" varchar,
 
-  CONSTRAINT fk_catalog_user_id FOREIGN KEY ("user_id") REFERENCES user ("id")
+  CONSTRAINT fk_catalog_user_id FOREIGN KEY ("user_id") REFERENCES "user" ("id")
 );
 
 CREATE TABLE item
@@ -68,7 +68,7 @@ CREATE TABLE token
     "token_refresh" varchar,
     "token_refresh_date" varchar,
 
-    CONSTRAINT fk_token_user_id FOREIGN KEY ("user_id") REFERENCES user ("id")
+    CONSTRAINT fk_token_user_id FOREIGN KEY ("user_id") REFERENCES "user" ("id")
 );
 
 CREATE TABLE list_favorite
@@ -76,7 +76,7 @@ CREATE TABLE list_favorite
     "user_id" bigint,
     "item_id" bigint,
 
-    CONSTRAINT fk_list_favorite_user_id FOREIGN KEY ("user_id") REFERENCES user ("id"),
+    CONSTRAINT fk_list_favorite_user_id FOREIGN KEY ("user_id") REFERENCES "user" ("id"),
     CONSTRAINT fk_list_favorite_item_id FOREIGN KEY ("item_id") REFERENCES item ("id")
 );
 
@@ -85,6 +85,6 @@ CREATE TABLE list_subscription
     "user_id" bigint,
     "item_id" bigint,
 
-    CONSTRAINT fk_list_subscription_user_id FOREIGN KEY ("user_id") REFERENCES user ("id"),
+    CONSTRAINT fk_list_subscription_user_id FOREIGN KEY ("user_id") REFERENCES "user" ("id"),
     CONSTRAINT fk_list_subscription_item_id FOREIGN KEY ("item_id") REFERENCES item ("id")
 );

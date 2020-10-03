@@ -21,7 +21,7 @@ public class Catalog implements AbstractEntity<Long> {
 
     @JoinColumn(name = "user_id")
     @OneToOne(fetch = FetchType.EAGER, optional = true)
-    private Long user_id;
+    private User user;
 
     @Column(name = "description")
     private String description;

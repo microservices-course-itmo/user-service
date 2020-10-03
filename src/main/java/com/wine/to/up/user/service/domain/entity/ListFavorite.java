@@ -19,11 +19,11 @@ public class ListFavorite implements AbstractEntity<Long> {
     @EmbeddedId
     private ListFavoriteId id;
 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private User user;
 
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Item item;
 }
