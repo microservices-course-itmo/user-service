@@ -15,8 +15,6 @@ import java.time.Instant;
 @Accessors(chain = true)
 public class UserDto implements AbstractDto<Long> {
     private Long id;
-    private String firstName;
-    private String lastName;
     private Instant birthDate;
     private String sex;
     private String email;
@@ -26,4 +24,5 @@ public class UserDto implements AbstractDto<Long> {
     private Instant createDate;
     private Company company;
     private RoleDto role;
+    private String password;
 }

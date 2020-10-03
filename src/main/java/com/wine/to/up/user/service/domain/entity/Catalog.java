@@ -1,13 +1,10 @@
 package com.wine.to.up.user.service.domain.entity;
 
-import java.util.List;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Entity

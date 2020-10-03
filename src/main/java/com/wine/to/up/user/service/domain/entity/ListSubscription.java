@@ -21,7 +21,7 @@ public class ListSubscription implements AbstractEntity<Long> {
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
-    private User User;
+    private User user;
 
     @JoinColumn(name = "item_id")
     @ManyToOne(fetch = FetchType.EAGER, optional = true)

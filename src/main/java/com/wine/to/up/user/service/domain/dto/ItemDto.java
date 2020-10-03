@@ -9,7 +9,9 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class RoleDto implements AbstractDto<Long>{
+public class ItemDto implements AbstractDto<Long>{
+
     private Long id;
     private String name;
+    private String description;
 }
