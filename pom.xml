@@ -19,9 +19,16 @@
     <properties>
         <current-version>0.1.2</current-version>
 
+        <lombok.version>1.18.10</lombok.version>
+        <modelmapper.version>2.3.5</modelmapper.version>
+        <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
+        <springfox-swagger-ui.version>2.9.2</springfox-swagger-ui.version>
+        <micrometer.version>1.5.2</micrometer.version>
         <service.commonlib.version>0.2.1-SNAPSHOT</service.commonlib.version>
         <user.service.api.version>0.1.0-SNAPSHOT</user.service.api.version>
 
+        <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
+        <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
     </properties>
 
     <dependencies>
