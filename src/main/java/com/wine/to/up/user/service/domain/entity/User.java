@@ -38,7 +38,7 @@ public class User implements AbstractEntity<Long> {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "city_id")
     private City city;
 
@@ -49,12 +49,12 @@ public class User implements AbstractEntity<Long> {
     private Instant createDate;
 
     @JoinColumn(name = "company_id")
-    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Company company;
 
     //TODO: optional
     @JoinColumn(name = "role_id")
-    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Role role;
 
     @Column(name = "password")
