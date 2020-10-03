@@ -139,7 +139,10 @@
                     <dependency>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-starter-logging</artifactId>
+                        <!-- из-за parent помника больше не работает
                         <version>${project.parent.version}</version>
+                        -->
+                        <version>2.3.1.RELEASE</version>
                     </dependency>
                 </dependencies>
 
