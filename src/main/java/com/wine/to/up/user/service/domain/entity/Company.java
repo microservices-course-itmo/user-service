@@ -8,9 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Entity
@@ -18,13 +16,11 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@Table(name = "dim_company")
+@Table(name = "companies")
 public class Company implements AbstractEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CompanyId")
     private Long id;
 
-    @Column(name = "CompanyName")
     private String name;
 }

@@ -16,11 +16,13 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@Table(name = "cities")
-public class City implements AbstractEntity<Long> {
+@Table(name = "items")
+public class Item implements AbstractEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+
+    private String description;
 }

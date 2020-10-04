@@ -1,6 +1,7 @@
 package com.wine.to.up.user.service.controller;
 
 import com.wine.to.up.user.service.domain.dto.UserDto;
+import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void createUser(@RequestBody UserDto userData) {
-        userService.create(userData);
+    public void createUser(@RequestBody UserRegistrationDto userRegistrationDto) {
+        userService.signUp(userRegistrationDto);
     }
 }
