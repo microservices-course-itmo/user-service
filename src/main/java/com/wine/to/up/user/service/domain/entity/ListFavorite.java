@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@Table(name = "list_favorite")
+@Table(name = "list_favorites")
 @IdClass(ListFavorite.class)
 public class ListFavorite implements AbstractEntity<Long>, Serializable {
     @Id

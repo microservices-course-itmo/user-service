@@ -15,7 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@Table(name = "list_catalog")
+@Table(name = "list_catalogs")
 @IdClass(ListCatalog.class)
 public class ListCatalog implements AbstractEntity<Long>, Serializable {
     @Id

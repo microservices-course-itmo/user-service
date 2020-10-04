@@ -1,7 +1,5 @@
 package com.wine.to.up.user.service.domain.dto;
 
-import com.wine.to.up.user.service.domain.entity.City;
-import com.wine.to.up.user.service.domain.entity.Company;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,16 +12,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class UserDto implements AbstractDto<Long> {
-    private Long id;
+public class UserRegistrationDto implements AbstractDto<Long> {
     private LocalDate birthDate;
     private String sex;
     private String email;
     private String phoneNumber;
-    private CityDto city;
-    private Boolean isActivated;
+    private Long cityId;
     private Instant createDate;
-    private CompanyDto company;
-    private RoleDto role;
+    private Long companyId;
     private String password;
 }
