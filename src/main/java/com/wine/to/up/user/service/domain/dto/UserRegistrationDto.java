@@ -24,7 +24,6 @@ public class UserRegistrationDto implements AbstractDto<Long> {
     private String email;
     private String phoneNumber;
     private Long cityId;
-    private Instant createDate;
     private Long companyId;
     private String password;
 }
