@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
     public final UserService userService;
-    public final ListFavoriteService listFavorite;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> findUserByID(@PathVariable Long id) {
@@ -27,12 +26,6 @@ public class UserController {
 
     @PostMapping
     public void createUser(@RequestBody UserRegistrationDto userRegistrationDto) {
-        UserDto userData = userService.signUp(userRegistrationDto);
-        userService.create(userData);
-    }
-
-    @PostMapping("/test")
-    public void createListFavorite(@RequestBody ListFavoriteDto listFavoriteData) {
-        listFavorite.create(listFavoriteData);
+        userService.signUp(userRegistrationDto);
     }
 }

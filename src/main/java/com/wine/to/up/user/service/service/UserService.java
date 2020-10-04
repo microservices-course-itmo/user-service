@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.service;
 
+import com.wine.to.up.user.service.controller.UserController;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
@@ -19,7 +20,9 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository repository, ModelMapper modelMapper, CityService cityService, CompanyService companyService, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository repository, ModelMapper modelMapper,
+                       CityService cityService, CompanyService companyService,
+                       RoleService roleService, PasswordEncoder passwordEncoder) {
         super(repository, modelMapper);
         this.cityService = cityService;
         this.companyService = companyService;
@@ -49,6 +52,6 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
         userDto.setBirthDate(userRegistrationDto.getBirthDate());
         userDto.setIsActivated(false);
         userDto.setCreateDate(Instant.now());
-        return userDto;
+        return this.create(userDto);
     }
 }
