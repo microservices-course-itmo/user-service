@@ -1,6 +1,9 @@
 package com.wine.to.up.user.service.controller;
 
+import com.wine.to.up.user.service.domain.dto.ListFavoriteDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
+import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
+import com.wine.to.up.user.service.service.ListFavoriteService;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
     public final UserService userService;
+    public final ListFavoriteService listFavorite;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> findUserByID(@PathVariable Long id) {
@@ -22,7 +26,13 @@ public class UserController {
     }
 
     @PostMapping
-    public void createUser(@RequestBody UserDto userData) {
+    public void createUser(@RequestBody UserRegistrationDto userRegistrationDto) {
+        UserDto userData = userService.signUp(userRegistrationDto);
         userService.create(userData);
+    }
+
+    @PostMapping("/test")
+    public void createListFavorite(@RequestBody ListFavoriteDto listFavoriteData) {
+        listFavorite.create(listFavoriteData);
     }
 }

@@ -1,6 +1,7 @@
 package com.wine.to.up.user.service.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,9 @@ public class UserDto implements AbstractDto<Long> {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
     private Instant createDate;
 
+    @JsonIgnore
+    private String password;
+
     private String sex;
     private String email;
     private String phoneNumber;
@@ -29,5 +33,4 @@ public class UserDto implements AbstractDto<Long> {
     private Boolean isActivated;
     private CompanyDto company;
     private RoleDto role;
-    private String password;
 }
