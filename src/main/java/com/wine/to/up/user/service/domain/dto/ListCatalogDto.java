@@ -16,9 +16,7 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class ListCatalogDto implements AbstractDto<Long>{
-
+public class ListCatalogDto implements AbstractDto<Long> {
     private Catalog catalog;
     private Item item;
-
 }

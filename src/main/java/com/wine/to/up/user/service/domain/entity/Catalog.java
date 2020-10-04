@@ -16,13 +16,11 @@ import lombok.experimental.Accessors;
 public class Catalog implements AbstractEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @JoinColumn(name = "user_id")
     @OneToOne(fetch = FetchType.EAGER, optional = true)
     private User user;
 
-    @Column(name = "description")
     private String description;
 }

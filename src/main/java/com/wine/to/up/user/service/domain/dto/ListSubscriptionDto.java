@@ -11,9 +11,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class ListSubscriptionDto implements AbstractDto<Long>{
-
+public class ListSubscriptionDto implements AbstractDto<Long> {
     private User user;
     private Item item;
-
 }
