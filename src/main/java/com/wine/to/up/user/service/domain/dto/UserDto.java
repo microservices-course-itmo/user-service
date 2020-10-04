@@ -10,7 +10,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.time.Instant;
@@ -19,6 +21,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(exclude = {"city", "company", "role"})
+@ToString(exclude = {"city", "role", "company"})
 @Accessors(chain = true)
 public class UserDto implements AbstractDto<Long> {
     private Long id;
