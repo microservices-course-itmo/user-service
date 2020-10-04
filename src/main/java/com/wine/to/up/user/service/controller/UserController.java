@@ -1,9 +1,7 @@
 package com.wine.to.up.user.service.controller;
 
-import com.wine.to.up.user.service.domain.dto.ListFavoriteDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
-import com.wine.to.up.user.service.service.ListFavoriteService;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
