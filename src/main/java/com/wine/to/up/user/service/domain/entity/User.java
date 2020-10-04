@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(exclude = {"city", "role", "company"})
 @ToString(exclude = {"city", "role", "company"})
 @Accessors(chain = true)
-@Table(name = "user")
+@Table(name = "users")
 public class User implements AbstractEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

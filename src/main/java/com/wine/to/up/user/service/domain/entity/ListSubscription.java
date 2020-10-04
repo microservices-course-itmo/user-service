@@ -8,21 +8,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
 @Table(name = "list_subscription")
-public class ListSubscription implements AbstractEntity<Long> {
+@IdClass(ListSubscription.class)
 
-    @EmbeddedId
-    private ListSubscriptionId id;
+public class ListSubscription implements AbstractEntity<Long>, Serializable {
 
+    @Id
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private User user;
 
+    @Id
     @JoinColumn(name = "item_id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Item item;

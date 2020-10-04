@@ -1,3 +1,9 @@
+CREATE TABLE messages
+(
+    id      UUID PRIMARY KEY,
+    content TEXT
+);
+
 CREATE TABLE company
 (
     "id"   bigint PRIMARY KEY,
@@ -10,9 +16,15 @@ CREATE TABLE city
     "name" varchar
 );
 
-CREATE TABLE "user"
+CREATE TABLE role
 (
-    "id"           bigint PRIMARY KEY,
+    "id"   bigserial PRIMARY KEY,
+    "name" varchar
+);
+
+CREATE TABLE "users"
+(
+    "id"           bigserial PRIMARY KEY,
     "role_id"      bigint,
     "city_id"      bigint,
     "company_id"   bigint,
@@ -30,45 +42,39 @@ CREATE TABLE "user"
     CONSTRAINT fk_user_role_id FOREIGN KEY ("role_id") REFERENCES role ("id")
 );
 
-CREATE TABLE role
-(
-    "id"   bigint PRIMARY KEY,
-    "name" varchar
-);
-
 CREATE TABLE catalog
 (
-  "id" bigint PRIMARY KEY,
-  "user_id" bigint,
-  "description" varchar,
+    "id"          bigserial PRIMARY KEY,
+    "user_id"     bigint,
+    "description" varchar,
 
-  CONSTRAINT fk_catalog_user_id FOREIGN KEY ("user_id") REFERENCES "user" ("id")
+    CONSTRAINT fk_catalog_user_id FOREIGN KEY ("user_id") REFERENCES "users" ("id")
 );
 
 CREATE TABLE item
 (
-    "id" bigint PRIMARY KEY,
-    "name" varchar,
+    "id"          bigserial PRIMARY KEY,
+    "name"        varchar,
     "description" varchar
 );
 
 CREATE TABLE list_catalog
 (
-  "catalog_id" bigint,
-  "item_id" bigint,
+    "catalog_id" bigint,
+    "item_id"    bigint,
 
-  CONSTRAINT fk_list_catalog_catalog_id FOREIGN KEY ("catalog_id") REFERENCES catalog ("id"),
-  CONSTRAINT fk_list_catalog_item_id FOREIGN KEY ("item_id") REFERENCES item ("id")
+    CONSTRAINT fk_list_catalog_catalog_id FOREIGN KEY ("catalog_id") REFERENCES catalog ("id"),
+    CONSTRAINT fk_list_catalog_item_id FOREIGN KEY ("item_id") REFERENCES item ("id")
 );
 
 CREATE TABLE token
 (
-    "user_id" bigint,
-    "token_access" varchar,
-    "token_refresh" varchar,
+    "user_id"            bigint,
+    "token_access"       varchar,
+    "token_refresh"      varchar,
     "token_refresh_date" varchar,
 
-    CONSTRAINT fk_token_user_id FOREIGN KEY ("user_id") REFERENCES "user" ("id")
+    CONSTRAINT fk_token_user_id FOREIGN KEY ("user_id") REFERENCES "users" ("id")
 );
 
 CREATE TABLE list_favorite
@@ -76,7 +82,7 @@ CREATE TABLE list_favorite
     "user_id" bigint,
     "item_id" bigint,
 
-    CONSTRAINT fk_list_favorite_user_id FOREIGN KEY ("user_id") REFERENCES "user" ("id"),
+    CONSTRAINT fk_list_favorite_user_id FOREIGN KEY ("user_id") REFERENCES "users" ("id"),
     CONSTRAINT fk_list_favorite_item_id FOREIGN KEY ("item_id") REFERENCES item ("id")
 );
 
@@ -85,6 +91,6 @@ CREATE TABLE list_subscription
     "user_id" bigint,
     "item_id" bigint,
 
-    CONSTRAINT fk_list_subscription_user_id FOREIGN KEY ("user_id") REFERENCES "user" ("id"),
+    CONSTRAINT fk_list_subscription_user_id FOREIGN KEY ("user_id") REFERENCES "users" ("id"),
     CONSTRAINT fk_list_subscription_item_id FOREIGN KEY ("item_id") REFERENCES item ("id")
 );

@@ -8,22 +8,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
 @Table(name = "list_favorite")
-public class ListFavorite implements AbstractEntity<Long> {
+@IdClass(ListFavorite.class)
 
-    @EmbeddedId
-    private ListFavoriteId id;
+public class ListFavorite implements AbstractEntity<Long>, Serializable {
 
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @Id
+    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private User user;
 
-    @JoinColumn(name = "item_id", insertable = false, updatable = false)
+    @Id
+    @JoinColumn(name = "item_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     private Item item;
+
 }
