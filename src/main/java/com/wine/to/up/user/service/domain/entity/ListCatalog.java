@@ -17,16 +17,14 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @Table(name = "list_catalog")
 @IdClass(ListCatalog.class)
-
 public class ListCatalog implements AbstractEntity<Long>, Serializable {
-
     @Id
     @JoinColumn(name = "catalog_id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private Catalog catalog;
 
     @Id
     @JoinColumn(name = "item_id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private Item item;
 }

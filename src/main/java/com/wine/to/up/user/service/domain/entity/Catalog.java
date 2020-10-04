@@ -19,7 +19,7 @@ public class Catalog implements AbstractEntity<Long> {
     private Long id;
 
     @JoinColumn(name = "user_id")
-    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
     private User user;
 
     private String description;

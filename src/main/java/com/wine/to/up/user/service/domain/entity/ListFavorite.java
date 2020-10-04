@@ -18,17 +18,15 @@ import java.util.Objects;
 @Accessors(chain = true)
 @Table(name = "list_favorite")
 @IdClass(ListFavorite.class)
-
 public class ListFavorite implements AbstractEntity<Long>, Serializable {
-
     @Id
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private User user;
 
     @Id
     @JoinColumn(name = "item_id", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private Item item;
 
 }
