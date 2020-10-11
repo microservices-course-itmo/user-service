@@ -34,7 +34,8 @@ public class ListSubscriptionService extends AbstractService<Long, ListSubscript
         System.out.println(id);
         return listSubscriptionRepository.findByItemId(id);
     }
-    public ListWineUserDto getUserTokens(ListSubscription listSubscription) {
+    public ListWineUserDto getUserTokens(Long id) {
+        ListSubscription listSubscription = this.findByItemId(id);
         ListWineUserDto listWineUserDto = new ListWineUserDto();
         listWineUserDto.setWineId(listSubscription.getItem().getId());
         listWineUserDto.setUser(listSubscription.getUser());
