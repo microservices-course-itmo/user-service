@@ -1,6 +1,5 @@
 package com.wine.to.up.user.service.service;
 
-import com.wine.to.up.user.service.controller.UserController;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
