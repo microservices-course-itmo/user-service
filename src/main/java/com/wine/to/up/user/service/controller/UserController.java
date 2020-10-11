@@ -32,7 +32,7 @@ public class UserController {
         userService.signUp(userRegistrationDto);
     }
 
-    @GetMapping("/wine/{id}")
+    @GetMapping("/{id}/subscriptions")
     public ResponseEntity<ListWineUserDto> findUserTokensByWine(@PathVariable Long id) {
         ListWineUserDto listWineUsers = listSubscriptionService.getUserTokens(id);
         return new ResponseEntity<>(listWineUsers, HttpStatus.OK);

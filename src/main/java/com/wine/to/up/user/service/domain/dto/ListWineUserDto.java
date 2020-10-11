@@ -1,12 +1,12 @@
 package com.wine.to.up.user.service.domain.dto;
 
-import com.wine.to.up.user.service.domain.entity.User;
+import com.wine.to.up.user.service.domain.entity.UserTokens;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +14,5 @@ import java.util.List;
 @Accessors(chain = true)
 public class ListWineUserDto implements AbstractDto<Long> {
     private Long wineId;
-    private User user;
+    private ArrayList<UserTokens> users;
 }

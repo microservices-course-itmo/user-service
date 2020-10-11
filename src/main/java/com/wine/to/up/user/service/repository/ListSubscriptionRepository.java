@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ListSubscriptionRepository extends CrudRepository<ListSubscription, Long> {
-    ListSubscription findByItemId(Long itemId);
+    Iterable<ListSubscription> findAllByItemId(Long itemId);
 }
