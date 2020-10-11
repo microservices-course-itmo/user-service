@@ -3,7 +3,6 @@ package com.wine.to.up.user.service.service;
 import com.wine.to.up.user.service.domain.dto.ListSubscriptionDto;
 import com.wine.to.up.user.service.domain.dto.ListWineUserDto;
 import com.wine.to.up.user.service.domain.entity.ListSubscription;
-import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.domain.entity.UserTokens;
 import com.wine.to.up.user.service.repository.ListSubscriptionRepository;
 import com.wine.to.up.user.service.repository.UserRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
