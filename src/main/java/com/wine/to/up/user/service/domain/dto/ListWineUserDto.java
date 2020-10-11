@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +14,5 @@ import java.util.ArrayList;
 @Accessors(chain = true)
 public class ListWineUserDto implements AbstractDto<Long> {
     private Long wineId;
-    private ArrayList<UserTokens> users;
+    private List<UserTokens> users;
 }

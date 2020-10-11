@@ -3,6 +3,7 @@ package com.wine.to.up.user.service.service;
 import com.wine.to.up.user.service.domain.dto.ListSubscriptionDto;
 import com.wine.to.up.user.service.domain.dto.ListWineUserDto;
 import com.wine.to.up.user.service.domain.entity.ListSubscription;
+import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.domain.entity.UserTokens;
 import com.wine.to.up.user.service.repository.ListSubscriptionRepository;
 import com.wine.to.up.user.service.repository.UserRepository;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 @Transactional
@@ -36,8 +39,8 @@ public class ListSubscriptionService extends AbstractService<Long, ListSubscript
         return ListSubscriptionDto.class;
     }
 
-    public ArrayList<ListSubscriptionDto> findUsersByItemId(Long id) {
-        ArrayList<ListSubscriptionDto> listSubscriptionDtoList = new ArrayList<ListSubscriptionDto>();
+    public List<ListSubscriptionDto> findUsersByItemId(Long id) {
+        List<ListSubscriptionDto> listSubscriptionDtoList = new ArrayList<>();
         for (ListSubscription listSubscriptionDto:
                 listSubscriptionRepository.findAllByItemId(id)) {
             listSubscriptionDtoList.add(modelMapper.map(listSubscriptionDto, getDTOClass()));
@@ -46,8 +49,8 @@ public class ListSubscriptionService extends AbstractService<Long, ListSubscript
     }
     public ListWineUserDto getUserTokens(Long id) {
         ListWineUserDto listWineUserDto = new ListWineUserDto();
-        ArrayList<ListSubscriptionDto> listSubscription = this.findUsersByItemId(id);
-        ArrayList<UserTokens> users = new ArrayList<>();
+        List<ListSubscriptionDto> listSubscription = this.findUsersByItemId(id);
+        List<UserTokens> users = new ArrayList<>();
         listWineUserDto.setWineId(id);
         for (ListSubscriptionDto listSubscriptionDto:
              listSubscription) {

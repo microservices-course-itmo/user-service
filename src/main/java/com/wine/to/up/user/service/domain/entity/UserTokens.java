@@ -2,11 +2,11 @@ package com.wine.to.up.user.service.domain.entity;
 
 import lombok.Data;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class UserTokens {
     private Long userId;
-    private ArrayList<String> iosTokens;
-    private ArrayList<String> fcmTokens;
+    private List<String> iosTokens;
+    private List<String> fcmTokens;
 }
