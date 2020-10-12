@@ -3,11 +3,13 @@ package com.wine.to.up.user.service.service;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
+import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -52,5 +54,10 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
         userDto.setIsActivated(false);
         userDto.setCreateDate(Instant.now());
         return this.create(userDto);
+    }
+
+    @Transactional(readOnly = true)
+    public User getByPhoneNumber(String phoneNumber) {
+        return repository.findByPhoneNumber(phoneNumber);
     }
 }

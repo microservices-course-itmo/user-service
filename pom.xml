@@ -27,7 +27,7 @@
         <postgres.driver.version>42.2.14</postgres.driver.version>
 
         <service.commonlib.version>0.2.1-SNAPSHOT</service.commonlib.version>
-        <user.service.api.version>0.1.0-SNAPSHOT</user.service.api.version>
+        <user.service.api.version>0.1.0</user.service.api.version>
 
         <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
         <flyway.version>6.5.1</flyway.version>
@@ -98,6 +98,20 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>4.9</version>
+        </dependency>
+
+        <!--Required: jwt-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <!--Required: firebase-->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>7.0.1</version>
         </dependency>
 
         <!-- Recommended-->
