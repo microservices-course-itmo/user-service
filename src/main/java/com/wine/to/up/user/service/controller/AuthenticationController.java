@@ -4,6 +4,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
+import com.wine.to.up.user.service.domain.dto.UserDto;
+import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.security.jwt.JwtTokenProvider;
@@ -60,5 +62,12 @@ public class AuthenticationController {
         }
 
         return null;
+    }
+
+    @PostMapping("/registration")
+    public ResponseEntity registration(@RequestBody UserRegistrationDto userRegistrationDto){
+        UserDto userDto = userService.signUp(userRegistrationDto);
+
+        return ResponseEntity.ok(userDto);
     }
 }
