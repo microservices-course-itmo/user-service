@@ -36,7 +36,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto){
+    public ResponseEntity<Map<Object, Object>> login(@RequestBody AuthenticationRequestDto requestDto){
         try {
             String idToken = requestDto.getFireBaseToken();
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
@@ -61,7 +61,8 @@ public class AuthenticationController {
             e.printStackTrace();
         }
 
-        return null;
+        Map<Object, Object> response = new HashMap<>();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/registration")
