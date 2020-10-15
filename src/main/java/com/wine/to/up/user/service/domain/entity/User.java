@@ -24,11 +24,14 @@ public class User implements AbstractEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable=true)
     private LocalDate birthDate;
 
     @Enumerated(EnumType.ORDINAL)
+    @Column(nullable=true)
     private Sex sex;
 
+    @Column(nullable=true)
     private String email;
 
     private String phoneNumber;
@@ -37,21 +40,22 @@ public class User implements AbstractEntity<Long> {
     @JoinColumn(name = "city_id")
     private City city;
 
-    @Column(name = "activated")
+    @Column(name = "activated", nullable=true)
     private Boolean isActivated;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable=true)
     private Instant createDate;
 
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_id", nullable=true)
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private Company company;
 
     //TODO: optional
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id", nullable=true)
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private Role role;
 
+    @Column(nullable=true)
     private String password;
 
     public enum Sex {

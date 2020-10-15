@@ -45,7 +45,12 @@ public class AuthenticationController {
             User user = userService.getByPhoneNumber(phoneNumber);
 
             if(user == null){
-                throw new EntityNotFoundException(userService.getEntityClass().getName(), phoneNumber);
+                UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+
+                userRegistrationDto.setPhoneNumber(phoneNumber);
+                userService.signUp(userRegistrationDto);
+
+                user = userService.getByPhoneNumber(phoneNumber);
             }
 
             AuthenticationResponse authenticationResponse = new AuthenticationResponse();
