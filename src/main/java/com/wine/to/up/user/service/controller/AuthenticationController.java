@@ -7,18 +7,18 @@ import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
+import com.wine.to.up.user.service.domain.response.AuthenticationResponse;
 import com.wine.to.up.user.service.exception.EntityNotFoundException;
-import com.wine.to.up.user.service.security.jwt.JwtTokenProvider;
+import com.wine.to.up.user.service.security.JwtTokenProvider;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -36,7 +36,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<Object, Object>> login(@RequestBody AuthenticationRequestDto requestDto){
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto requestDto){
         try {
             String idToken = requestDto.getFireBaseToken();
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
@@ -48,27 +48,35 @@ public class AuthenticationController {
                 throw new EntityNotFoundException(userService.getEntityClass().getName(), phoneNumber);
             }
 
-            String accessToken = jwtTokenProvider.createToken(phoneNumber, true);
-            String refreshToken = jwtTokenProvider.createToken(phoneNumber, false);
+            AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
-            Map<Object, Object> response = new HashMap<>();
+            authenticationResponse.setAccessToken(jwtTokenProvider.createToken(phoneNumber, true));
+            authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(phoneNumber, false));
 
-            response.put("accessToken", accessToken);
-            response.put("refreshToken", refreshToken);
+            authenticationResponse.setUser(userService.getUserResponse(user));
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(authenticationResponse);
         } catch (FirebaseAuthException e) {
             e.printStackTrace();
         }
 
-        Map<Object, Object> response = new HashMap<>();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/registration")
-    public ResponseEntity registration(@RequestBody UserRegistrationDto userRegistrationDto){
+    public ResponseEntity<UserDto> registration(@RequestBody UserRegistrationDto userRegistrationDto){
         UserDto userDto = userService.signUp(userRegistrationDto);
 
         return ResponseEntity.ok(userDto);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Void> validate(@RequestParam String token) {
+        try {
+            jwtTokenProvider.validateToken(token);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 }
