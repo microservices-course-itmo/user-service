@@ -48,7 +48,7 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
 
         userResponse.setId(user.getId());
         userResponse.setNumber(user.getPhoneNumber());
-        userResponse.setRole(user.getRole());
+        userResponse.setRole(user.getRole().getName());
 
         return userResponse;
     }

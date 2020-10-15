@@ -13,5 +13,5 @@ import lombok.experimental.Accessors;
 public class UserResponse {
     private Long id;
     private String number;
-    private Role role;
+    private String role;
 }
