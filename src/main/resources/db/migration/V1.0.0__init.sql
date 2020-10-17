@@ -1,9 +1,3 @@
-CREATE TABLE messages
-(
-    id      UUID PRIMARY KEY,
-    content TEXT
-);
-
 CREATE TABLE companies
 (
     "id"   bigint PRIMARY KEY,
@@ -16,7 +10,7 @@ CREATE TABLE cities
     "name" varchar
 );
 
-CREATE TABLE roles
+CREATE TABLE user_roles
 (
     "id"   bigserial PRIMARY KEY,
     "name" varchar
@@ -39,7 +33,7 @@ CREATE TABLE users
 
     CONSTRAINT fk_user_city_id FOREIGN KEY ("city_id") REFERENCES cities ("id"),
     CONSTRAINT fk_user_company_id FOREIGN KEY ("company_id") REFERENCES companies ("id"),
-    CONSTRAINT fk_user_role_id FOREIGN KEY ("role_id") REFERENCES roles ("id")
+    CONSTRAINT fk_user_role_id FOREIGN KEY ("role_id") REFERENCES user_roles ("id")
 );
 
 CREATE TABLE catalogs

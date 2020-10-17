@@ -59,7 +59,6 @@ public class AuthenticationController {
 
         authenticationResponse.setAccessToken(jwtTokenProvider.createToken(phoneNumber, true));
         authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(phoneNumber, false));
-
         authenticationResponse.setUser(UserDtoToUserResponseMapper.getUserResponse(user));
 
         return ResponseEntity.ok(authenticationResponse);
@@ -67,11 +66,10 @@ public class AuthenticationController {
 
     @PostMapping("/validate")
     public ResponseEntity<Void> validate(@RequestParam String token) {
-        try {
-            jwtTokenProvider.validateToken(token);
+        if (jwtTokenProvider.validateToken(token)) {
             return ResponseEntity.ok().build();
-        } catch (JwtAuthenticationException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }

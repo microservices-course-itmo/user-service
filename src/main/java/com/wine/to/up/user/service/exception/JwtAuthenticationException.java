@@ -1,8 +1,6 @@
 package com.wine.to.up.user.service.exception;
 
-import org.springframework.security.core.AuthenticationException;
-
-public class JwtAuthenticationException extends AuthenticationException {
+public class JwtAuthenticationException extends RuntimeException {
     public JwtAuthenticationException(String msg, Throwable t) {
         super(msg, t);
     }
