@@ -17,19 +17,6 @@ import java.io.IOException;
 public class ServiceApplication {
 
     public static void main(String[] args) {
-        try {
-            FileInputStream serviceAccount =
-                    new FileInputStream("/Users/artem/IdeaProjects/user-service/serv.json");
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setDatabaseUrl("https://testfire-1bc2f.firebaseio.com")
-                    .build();
-
-            FirebaseApp.initializeApp(options);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         SpringApplication.run(ServiceApplication.class, args);
     }
 
