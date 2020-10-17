@@ -3,11 +3,10 @@ package com.wine.to.up.user.service.service;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
-import com.wine.to.up.user.service.exception.EntityNotFoundException;
+import com.wine.to.up.user.service.domain.response.UserResponse;
 import com.wine.to.up.user.service.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,20 +14,14 @@ import java.time.Instant;
 
 @Service
 public class UserService extends AbstractService<Long, UserDto, User, UserRepository> {
-    private final CityService cityService;
-    private final CompanyService companyService;
     private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository repository, ModelMapper modelMapper,
-                       CityService cityService, CompanyService companyService,
-                       RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository repository,
+                       ModelMapper modelMapper,
+                       RoleService roleService) {
         super(repository, modelMapper);
-        this.cityService = cityService;
-        this.companyService = companyService;
         this.roleService = roleService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,21 +36,15 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
 
     public UserDto signUp(UserRegistrationDto userRegistrationDto) {
         UserDto userDto = new UserDto();
-        userDto.setEmail(userRegistrationDto.getEmail());
-        userDto.setCity(cityService.getById(userRegistrationDto.getCityId()));
-        userDto.setCompany(companyService.getById(userRegistrationDto.getCompanyId()));
         userDto.setRole(roleService.getById(1L));
-        userDto.setSex(userRegistrationDto.getSex());
         userDto.setPhoneNumber(userRegistrationDto.getPhoneNumber());
-        userDto.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
-        userDto.setBirthDate(userRegistrationDto.getBirthDate());
         userDto.setIsActivated(false);
         userDto.setCreateDate(Instant.now());
         return this.create(userDto);
     }
 
     @Transactional(readOnly = true)
-    public User getByPhoneNumber(String phoneNumber) {
-        return repository.findByPhoneNumber(phoneNumber);
+    public UserDto getByPhoneNumber(String phoneNumber) {
+        return modelMapper.map(repository.findByPhoneNumber(phoneNumber), getDTOClass());
     }
 }

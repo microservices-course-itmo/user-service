@@ -1,7 +1,6 @@
 package com.wine.to.up.user.service.configuration;
 
-import com.wine.to.up.user.service.security.jwt.JwtConfigurer;
-import com.wine.to.up.user.service.security.jwt.JwtTokenProvider;
+import com.wine.to.up.user.service.security.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

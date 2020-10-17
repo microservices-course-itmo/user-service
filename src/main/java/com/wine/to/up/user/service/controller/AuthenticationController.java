@@ -6,19 +6,19 @@ import com.google.firebase.auth.FirebaseToken;
 import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
-import com.wine.to.up.user.service.domain.entity.User;
-import com.wine.to.up.user.service.exception.EntityNotFoundException;
-import com.wine.to.up.user.service.security.jwt.JwtTokenProvider;
+import com.wine.to.up.user.service.domain.response.AuthenticationResponse;
+import com.wine.to.up.user.service.exception.JwtAuthenticationException;
+import com.wine.to.up.user.service.security.JwtTokenProvider;
+import com.wine.to.up.user.service.security.UserDtoToUserResponseMapper;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -36,38 +36,42 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto){
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto requestDto){
+        String phoneNumber = null;
+
         try {
             String idToken = requestDto.getFireBaseToken();
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            String phoneNumber = (String) decodedToken.getClaims().get("phone_number");
-
-            User user = userService.getByPhoneNumber(phoneNumber);
-
-            if(user == null){
-                throw new EntityNotFoundException(userService.getEntityClass().getName(), phoneNumber);
-            }
-
-            String accessToken = jwtTokenProvider.createToken(phoneNumber, true);
-            String refreshToken = jwtTokenProvider.createToken(phoneNumber, false);
-
-            Map<Object, Object> response = new HashMap<>();
-
-            response.put("accessToken", accessToken);
-            response.put("refreshToken", refreshToken);
-
-            return ResponseEntity.ok(response);
+            phoneNumber = (String) decodedToken.getClaims().get("phone_number");
         } catch (FirebaseAuthException e) {
             e.printStackTrace();
         }
 
-        return null;
+        UserDto user = userService.getByPhoneNumber(phoneNumber);
+        if(user == null){
+            UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+            userRegistrationDto.setPhoneNumber(phoneNumber);
+            userService.signUp(userRegistrationDto);
+            user = userService.getByPhoneNumber(phoneNumber);
+        }
+
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+
+        authenticationResponse.setAccessToken(jwtTokenProvider.createToken(phoneNumber, true));
+        authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(phoneNumber, false));
+
+        authenticationResponse.setUser(UserDtoToUserResponseMapper.getUserResponse(user));
+
+        return ResponseEntity.ok(authenticationResponse);
     }
 
-    @PostMapping("/registration")
-    public ResponseEntity registration(@RequestBody UserRegistrationDto userRegistrationDto){
-        UserDto userDto = userService.signUp(userRegistrationDto);
-
-        return ResponseEntity.ok(userDto);
+    @PostMapping("/validate")
+    public ResponseEntity<Void> validate(@RequestParam String token) {
+        try {
+            jwtTokenProvider.validateToken(token);
+            return ResponseEntity.ok().build();
+        } catch (JwtAuthenticationException e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 }
