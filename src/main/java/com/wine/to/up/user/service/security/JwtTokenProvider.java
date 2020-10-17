@@ -40,11 +40,11 @@ public class JwtTokenProvider {
             validity = new Date(now.getTime() + refreshValidityInMilliseconds);
         }
 
-        return Jwts.builder()//
-                .setClaims(claims)//
-                .setIssuedAt(now)//
-                .setExpiration(validity)//
-                .signWith(SignatureAlgorithm.HS256, secret)//
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
@@ -64,10 +64,13 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (JwtAuthenticationException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid");
+            if (claims.getBody().getExpiration().before(new Date())) {
+                return false;
+            }
+        } catch (JwtAuthenticationException | IllegalArgumentException | MalformedJwtException e) {
+            return false;
         }
+
+        return true;
     }
 }
