@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.security;
 
+import com.wine.to.up.user.service.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -65,8 +66,8 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
 
             return !claims.getBody().getExpiration().before(new Date());
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtException("JWT token is expired or invalid");
+        } catch (JwtAuthenticationException | IllegalArgumentException e) {
+            throw new JwtAuthenticationException("JWT token is expired or invalid");
         }
     }
 }

@@ -6,10 +6,10 @@ import com.google.firebase.auth.FirebaseToken;
 import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
-import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.domain.response.AuthenticationResponse;
-import com.wine.to.up.user.service.exception.EntityNotFoundException;
+import com.wine.to.up.user.service.exception.JwtAuthenticationException;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
+import com.wine.to.up.user.service.security.UserDtoToUserResponseMapper;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,42 +37,32 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto requestDto){
+        String phoneNumber = null;
+
         try {
             String idToken = requestDto.getFireBaseToken();
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            String phoneNumber = (String) decodedToken.getClaims().get("phone_number");
-
-            User user = userService.getByPhoneNumber(phoneNumber);
-
-            if(user == null){
-                UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
-
-                userRegistrationDto.setPhoneNumber(phoneNumber);
-                userService.signUp(userRegistrationDto);
-
-                user = userService.getByPhoneNumber(phoneNumber);
-            }
-
-            AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-
-            authenticationResponse.setAccessToken(jwtTokenProvider.createToken(phoneNumber, true));
-            authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(phoneNumber, false));
-
-            authenticationResponse.setUser(userService.getUserResponse(user));
-
-            return ResponseEntity.ok(authenticationResponse);
+            phoneNumber = (String) decodedToken.getClaims().get("phone_number");
         } catch (FirebaseAuthException e) {
             e.printStackTrace();
         }
 
-        return ResponseEntity.ok().build();
-    }
+        UserDto user = userService.getByPhoneNumber(phoneNumber);
+        if(user == null){
+            UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+            userRegistrationDto.setPhoneNumber(phoneNumber);
+            userService.signUp(userRegistrationDto);
+            user = userService.getByPhoneNumber(phoneNumber);
+        }
 
-    @PostMapping("/registration")
-    public ResponseEntity<UserDto> registration(@RequestBody UserRegistrationDto userRegistrationDto){
-        UserDto userDto = userService.signUp(userRegistrationDto);
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
-        return ResponseEntity.ok(userDto);
+        authenticationResponse.setAccessToken(jwtTokenProvider.createToken(phoneNumber, true));
+        authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(phoneNumber, false));
+
+        authenticationResponse.setUser(UserDtoToUserResponseMapper.getUserResponse(user));
+
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @PostMapping("/validate")
@@ -80,7 +70,7 @@ public class AuthenticationController {
         try {
             jwtTokenProvider.validateToken(token);
             return ResponseEntity.ok().build();
-        } catch (Exception e) {
+        } catch (JwtAuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }

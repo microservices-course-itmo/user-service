@@ -43,18 +43,8 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
         return this.create(userDto);
     }
 
-    public UserResponse getUserResponse(User user) {
-        UserResponse userResponse =  new UserResponse();
-
-        userResponse.setId(user.getId());
-        userResponse.setNumber(user.getPhoneNumber());
-        userResponse.setRole(user.getRole().getName());
-
-        return userResponse;
-    }
-
     @Transactional(readOnly = true)
-    public User getByPhoneNumber(String phoneNumber) {
-        return repository.findByPhoneNumber(phoneNumber);
+    public UserDto getByPhoneNumber(String phoneNumber) {
+        return modelMapper.map(repository.findByPhoneNumber(phoneNumber), getDTOClass());
     }
 }
