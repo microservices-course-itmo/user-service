@@ -7,7 +7,6 @@ import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.response.AuthenticationResponse;
-import com.wine.to.up.user.service.exception.JwtAuthenticationException;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
 import com.wine.to.up.user.service.security.UserDtoToUserResponseMapper;
 import com.wine.to.up.user.service.service.UserService;
@@ -57,8 +56,28 @@ public class AuthenticationController {
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
-        authenticationResponse.setAccessToken(jwtTokenProvider.createToken(phoneNumber, true));
-        authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(phoneNumber, false));
+        authenticationResponse.setAccessToken(jwtTokenProvider.createToken(user, true));
+        authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(user, false));
+        authenticationResponse.setUser(UserDtoToUserResponseMapper.getUserResponse(user));
+
+        return ResponseEntity.ok(authenticationResponse);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthenticationResponse> refresh(@RequestBody String refreshToken){
+
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        String phoneNumber = jwtTokenProvider.getPhoneNumber(refreshToken);
+
+        UserDto user = userService.getByPhoneNumber(phoneNumber);
+
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+
+        authenticationResponse.setAccessToken(jwtTokenProvider.createToken(user, true));
+        authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(user, false));
         authenticationResponse.setUser(UserDtoToUserResponseMapper.getUserResponse(user));
 
         return ResponseEntity.ok(authenticationResponse);

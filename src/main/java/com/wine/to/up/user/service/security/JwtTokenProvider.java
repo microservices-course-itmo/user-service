@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.security;
 
+import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,17 +28,21 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createToken(String phoneNumber, boolean isAccessToken) {
+    public String createToken(UserDto userDto, boolean isAccessToken) {
 
-        Claims claims = Jwts.claims().setSubject(phoneNumber);
+        Claims claims = Jwts.claims().setSubject(userDto.getPhoneNumber())
+                .setSubject(userDto.getRole().getName())
+                .setSubject(userDto.getId().toString());
 
         Date now = new Date();
         Date validity;
 
         if(isAccessToken){
             validity = new Date(now.getTime() + accessValidityInMilliseconds);
+            claims.setSubject("ACCESS_TOKEN");
         } else{
             validity = new Date(now.getTime() + refreshValidityInMilliseconds);
+            claims.setSubject("REFRESH_TOKEN");
         }
 
         return Jwts.builder()
