@@ -30,19 +30,20 @@ public class JwtTokenProvider {
 
     public String createToken(UserDto userDto, boolean isAccessToken) {
 
-        Claims claims = Jwts.claims().setSubject(userDto.getPhoneNumber())
-                .setSubject(userDto.getRole().getName())
-                .setSubject(userDto.getId().toString());
+        Claims claims = Jwts.claims();
+        claims.put("phone_number", userDto.getPhoneNumber());
+        claims.put("role", userDto.getRole().getName());
+        claims.put("id", userDto.getId().toString());
 
         Date now = new Date();
         Date validity;
 
         if(isAccessToken){
             validity = new Date(now.getTime() + accessValidityInMilliseconds);
-            claims.setSubject("ACCESS_TOKEN");
+            claims.put("type", "ACCESS_TOKEN");
         } else{
             validity = new Date(now.getTime() + refreshValidityInMilliseconds);
-            claims.setSubject("REFRESH_TOKEN");
+            claims.put("type", "REFRESH_TOKEN");
         }
 
         return Jwts.builder()
