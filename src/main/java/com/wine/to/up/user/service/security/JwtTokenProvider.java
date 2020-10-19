@@ -55,7 +55,11 @@ public class JwtTokenProvider {
     }
 
     public String getPhoneNumber(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+        return (String) Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("phone_number");
+    }
+
+    public String getTokenType(String token) {
+        return (String) Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("type");
     }
 
     public String resolveToken(HttpServletRequest req) {
@@ -73,7 +77,7 @@ public class JwtTokenProvider {
             if (claims.getBody().getExpiration().before(new Date())) {
                 return false;
             }
-        } catch (JwtAuthenticationException | IllegalArgumentException | MalformedJwtException e) {
+        } catch (JwtAuthenticationException | IllegalArgumentException | MalformedJwtException | SignatureException e) {
             return false;
         }
 

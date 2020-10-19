@@ -65,9 +65,14 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthenticationResponse> refresh(@RequestBody String refreshToken){
+        String tokenType = jwtTokenProvider.getTokenType(refreshToken);
 
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
+        if (!jwtTokenProvider.validateToken(refreshToken) && tokenType.equals("REFRESH_TOKEN")) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!tokenType.equals("REFRESH_TOKEN")) {
+            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
         }
 
         String phoneNumber = jwtTokenProvider.getPhoneNumber(refreshToken);
