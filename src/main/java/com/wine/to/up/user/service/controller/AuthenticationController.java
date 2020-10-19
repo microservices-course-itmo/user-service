@@ -50,8 +50,7 @@ public class AuthenticationController {
         if(user == null){
             UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
             userRegistrationDto.setPhoneNumber(phoneNumber);
-            userService.signUp(userRegistrationDto);
-            user = userService.getByPhoneNumber(phoneNumber);
+            user = userService.signUp(userRegistrationDto);
         }
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
@@ -64,7 +63,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthenticationResponse> refresh(@RequestBody String refreshToken){
+    public ResponseEntity<AuthenticationResponse> refresh(@RequestParam String refreshToken){
         String tokenType = jwtTokenProvider.getTokenType(refreshToken);
 
         if (!jwtTokenProvider.validateToken(refreshToken) && tokenType.equals("REFRESH_TOKEN")) {

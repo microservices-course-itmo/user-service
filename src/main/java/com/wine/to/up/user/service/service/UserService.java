@@ -48,6 +48,11 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
 
     @Transactional(readOnly = true)
     public UserDto getByPhoneNumber(String phoneNumber) {
-        return modelMapper.map(repository.findByPhoneNumber(phoneNumber), getDTOClass());
+        User user = repository.findByPhoneNumber(phoneNumber);
+        if (user == null) {
+            return null;
+        }
+
+        return modelMapper.map(user, getDTOClass());
     }
 }
