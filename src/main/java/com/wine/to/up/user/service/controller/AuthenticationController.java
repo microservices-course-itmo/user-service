@@ -8,7 +8,7 @@ import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.response.AuthenticationResponse;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
-import com.wine.to.up.user.service.security.UserDtoToUserResponseMapper;
+import com.wine.to.up.user.service.domain.response.mapper.UserDtoToUserResponseMapper;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,8 +3,6 @@ package com.wine.to.up.user.service.controller;
 import com.wine.to.up.user.service.domain.dto.ListWineUserDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
-import com.wine.to.up.user.service.domain.entity.ListSubscription;
-import com.wine.to.up.user.service.repository.ListSubscriptionRepository;
 import com.wine.to.up.user.service.service.ListSubscriptionService;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.wine.to.up.user.service.security;
+package com.wine.to.up.user.service.domain.response.mapper;
 
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.response.UserResponse;
