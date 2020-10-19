@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.security;
 
+import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,17 +28,22 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createToken(String phoneNumber, boolean isAccessToken) {
+    public String createToken(UserDto userDto, boolean isAccessToken) {
 
-        Claims claims = Jwts.claims().setSubject(phoneNumber);
+        Claims claims = Jwts.claims();
+        claims.put("phone_number", userDto.getPhoneNumber());
+        claims.put("role", userDto.getRole().getName());
+        claims.put("id", userDto.getId().toString());
 
         Date now = new Date();
         Date validity;
 
         if(isAccessToken){
             validity = new Date(now.getTime() + accessValidityInMilliseconds);
+            claims.put("type", "ACCESS_TOKEN");
         } else{
             validity = new Date(now.getTime() + refreshValidityInMilliseconds);
+            claims.put("type", "REFRESH_TOKEN");
         }
 
         return Jwts.builder()
@@ -49,7 +55,11 @@ public class JwtTokenProvider {
     }
 
     public String getPhoneNumber(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+        return (String) Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("phone_number");
+    }
+
+    public String getTokenType(String token) {
+        return (String) Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("type");
     }
 
     public String resolveToken(HttpServletRequest req) {
@@ -67,7 +77,7 @@ public class JwtTokenProvider {
             if (claims.getBody().getExpiration().before(new Date())) {
                 return false;
             }
-        } catch (JwtAuthenticationException | IllegalArgumentException | MalformedJwtException e) {
+        } catch (JwtAuthenticationException | IllegalArgumentException | MalformedJwtException | SignatureException e) {
             return false;
         }
 
