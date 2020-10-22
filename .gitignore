@@ -21,3 +21,4 @@ bin
 .editorconfig
 /**/application-dev.properties
 firebase.json
+.run
