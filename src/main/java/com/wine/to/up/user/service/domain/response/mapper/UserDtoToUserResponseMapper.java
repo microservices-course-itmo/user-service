@@ -8,7 +8,7 @@ public class UserDtoToUserResponseMapper {
         UserResponse userResponse =  new UserResponse();
 
         userResponse.setId(user.getId());
-        userResponse.setNumber(user.getPhoneNumber());
+        userResponse.setPhoneNumber(user.getPhoneNumber());
         userResponse.setRole(user.getRole().getName());
 
         return userResponse;

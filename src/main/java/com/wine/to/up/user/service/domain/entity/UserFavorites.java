@@ -15,16 +15,17 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@Table(name = "list_catalogs")
-@IdClass(ListCatalog.class)
-public class ListCatalog implements AbstractEntity<Long>, Serializable {
+@Table(name = "list_favorites")
+@IdClass(UserFavorites.class)
+public class UserFavorites implements AbstractEntity<Long>, Serializable {
     @Id
-    @JoinColumn(name = "catalog_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    private Catalog catalog;
+    private User user;
 
     @Id
-    @JoinColumn(name = "item_id", insertable = false, updatable = false)
+    @JoinColumn(name = "item_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private Item item;
+
 }

@@ -12,6 +12,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class UserResponse {
     private Long id;
-    private String number;
+    private String phoneNumber;
     private String role;
 }

@@ -27,7 +27,8 @@
         <postgres.driver.version>42.2.14</postgres.driver.version>
 
         <service.commonlib.version>0.2.1-SNAPSHOT</service.commonlib.version>
-        <user.service.api.version>0.1.1-SNAPSHOT</user.service.api.version>
+        <user.service.api.version>0.1.2-SNAPSHOT</user.service.api.version>
+        <catalog.service.api.version>0.1.0</catalog.service.api.version>
 
         <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
         <flyway.version>6.5.1</flyway.version>
@@ -140,6 +141,11 @@
             <groupId>com.wine.to.up</groupId>
             <artifactId>user-service-api</artifactId>
             <version>${user.service.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wine.to.up</groupId>
+            <artifactId>catalog-service-api</artifactId>
+            <version>${catalog.service.api.version}</version>
         </dependency>
     </dependencies>
 
