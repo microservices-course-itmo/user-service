@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Service
-public abstract class AbstractService <I, D extends AbstractDto<I>,
-                                       E extends AbstractEntity<I>,
-                                       R extends CrudRepository<E, I>> {
+public abstract class AbstractService
+    <I, D extends AbstractDto<I>, E extends AbstractEntity<I>, R extends CrudRepository<E, I>> {
+
     protected final R repository;
     protected final ModelMapper modelMapper;
 
@@ -33,6 +33,7 @@ public abstract class AbstractService <I, D extends AbstractDto<I>,
     }
 
     public abstract Class<E> getEntityClass();
+
     public abstract Class<D> getDTOClass();
 
     public D create(D entity) {

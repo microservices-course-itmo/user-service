@@ -5,7 +5,9 @@ import com.wine.to.up.commonlib.logging.NotableEvent;
 public enum UserServiceNotableEvents implements NotableEvent {
     I_KAFKA_SEND_MESSAGE_SUCCESS("Kafka send message: {}"),
     I_CONTROLLER_RECEIVED_MESSAGE("Message: {}"),
-    W_SOME_WARN_EVENT("Warn situation. Description: {}");
+    W_SOME_WARN_EVENT("Warn situation. Description: {}"),
+    F_FIREBASE_CONFIG_LOAD_FAILURE("Fatal: firebase config is missing. {}");
+
 
     private final String template;
 
