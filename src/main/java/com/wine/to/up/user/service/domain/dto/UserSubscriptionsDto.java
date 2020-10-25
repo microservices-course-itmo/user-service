@@ -1,4 +1,4 @@
-package com.wine.to.up.user.service.domain.response;
+package com.wine.to.up.user.service.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +9,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class AuthenticationResponse {
-    private String accessToken;
-    private String refreshToken;
-
-    private UserResponse user;
+public class UserSubscriptionsDto implements AbstractDto<Long> {
+    private UserDto user;
+    private ItemDto item;
 }
