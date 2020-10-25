@@ -30,7 +30,7 @@ public class UserController {
                     notes = "Description: Returns user and httpStatus OK or error code",
                     response = UserDto.class,
                     responseContainer = "ResponseEntity")
-    @GetMapping("/{id}/full", produces = "application/json")
+    @GetMapping(path = "/{id}/full", produces = "application/json")
     public ResponseEntity<UserDto> findUserByID(
             @ApiParam(name = "id", value = "User's ID", required = true)
             @PathVariable Long id) {
@@ -40,6 +40,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findUserInfoByID(@PathVariable Long id) {
         return new ResponseEntity<>(modelMapper.map(userService.getById(id), UserResponse.class), HttpStatus.OK);
+    }
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> findCurrentUserInfo(HttpServletRequest httpServletRequest) {
