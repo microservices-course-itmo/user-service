@@ -14,13 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class ListSubscriptionService
+public class SubscriptionService
     extends AbstractService<Long, UserSubscriptionsDto, UserSubscription, UserSubscriptionsRepository> {
     private final UserSubscriptionsRepository listSubscriptionRepository;
 
     @Autowired
-    public ListSubscriptionService(UserSubscriptionsRepository repository, ModelMapper modelMapper,
-                                   UserSubscriptionsRepository listSubscriptionRepository) {
+    public SubscriptionService(UserSubscriptionsRepository repository, ModelMapper modelMapper,
+                               UserSubscriptionsRepository listSubscriptionRepository) {
         super(repository, modelMapper);
         this.listSubscriptionRepository = listSubscriptionRepository;
     }
@@ -43,7 +43,7 @@ public class ListSubscriptionService
         return listSubscriptionDtoList;
     }
 
-    public WineResponse getUserTokens(Long id) {
+    public WineResponse getPushTokensByWineId(Long id) {
         WineResponse response = new WineResponse();
         List<UserSubscriptionsDto> listSubscription = this.findUsersByWineId(id);
         List<UserTokens> users = new ArrayList<>();

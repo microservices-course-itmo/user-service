@@ -2,7 +2,7 @@ package com.wine.to.up.user.service.controller;
 
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.UserDto;
-import com.wine.to.up.user.service.service.ListSubscriptionService;
+import com.wine.to.up.user.service.service.SubscriptionService;
 import com.wine.to.up.user.service.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class UserController {
     public final UserService userService;
-    public final ListSubscriptionService listSubscriptionService;
+    public final SubscriptionService subscriptionService;
     public final ModelMapper modelMapper;
 
     @GetMapping("/{id}/full")

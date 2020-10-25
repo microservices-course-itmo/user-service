@@ -13,7 +13,7 @@ import com.wine.to.up.user.service.api.dto.WineResponse;
 import com.wine.to.up.user.service.api.message.KafkaMessageHeaderOuterClass;
 import com.wine.to.up.user.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
 import com.wine.to.up.user.service.logging.UserServiceNotableEvents;
-import com.wine.to.up.user.service.service.ListSubscriptionService;
+import com.wine.to.up.user.service.service.SubscriptionService;
 import java.util.Collections;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class CatalogTopicKafkaMessageHandler implements KafkaMessageHandler<KafkaMessageSentEvent> {
-    public final ListSubscriptionService listSubscriptionService;
+    public final SubscriptionService subscriptionService;
     private final KafkaMessageSender<KafkaMessageSentEvent> kafkaSendMessageService;
     private final ObjectMapper objectMapper;
 
@@ -32,10 +32,10 @@ public class CatalogTopicKafkaMessageHandler implements KafkaMessageHandler<Kafk
 
     @Autowired
     public CatalogTopicKafkaMessageHandler(KafkaMessageSender<KafkaMessageSentEvent> kafkaSendMessageService,
-                                           ListSubscriptionService listSubscriptionService,
+                                           SubscriptionService subscriptionService,
                                            ObjectMapper objectMapper) {
         this.kafkaSendMessageService = kafkaSendMessageService;
-        this.listSubscriptionService = listSubscriptionService;
+        this.subscriptionService = subscriptionService;
         this.objectMapper = objectMapper;
     }
 
@@ -52,7 +52,7 @@ public class CatalogTopicKafkaMessageHandler implements KafkaMessageHandler<Kafk
 
         WineResponse response;
         try {
-            response = listSubscriptionService.getUserTokens(
+            response = subscriptionService.getPushTokensByWineId(
                 Long.parseLong(notificationServiceMessage.getId())
             );
         } catch (NumberFormatException ex) {
