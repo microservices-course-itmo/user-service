@@ -30,6 +30,7 @@ public class FirebaseConfigDecryptReadStrategy implements FirebaseConfigReadStra
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions") // for npe inspection, because it is checked before
     public InputStream read() throws GeneralSecurityException, IOException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] key = digest.digest(secretKey.getBytes(StandardCharsets.UTF_8));
