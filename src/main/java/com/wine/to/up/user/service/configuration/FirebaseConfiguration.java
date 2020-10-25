@@ -10,9 +10,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class FirebaseConfiguration {
     @Value("${firebase.url}")
     private String firebaseUrl;
@@ -29,10 +29,10 @@ public class FirebaseConfiguration {
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .setDatabaseUrl(firebaseUrl)
                 .build();
-
             FirebaseApp.initializeApp(options);
         } catch (IOException e) {
             eventLogger.error(UserServiceNotableEvents.F_FIREBASE_CONFIG_LOAD_FAILURE);
         }
     }
 }
+
