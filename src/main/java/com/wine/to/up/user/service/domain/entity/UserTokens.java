@@ -1,8 +1,7 @@
 package com.wine.to.up.user.service.domain.entity;
 
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class UserTokens {

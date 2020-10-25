@@ -3,18 +3,22 @@ package com.wine.to.up.user.service.configuration;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.wine.to.up.commonlib.annotations.InjectEventLogger;
+import com.wine.to.up.commonlib.logging.EventLogger;
+import com.wine.to.up.user.service.logging.UserServiceNotableEvents;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@Slf4j
 public class FirebaseConfiguration {
     @Value("${firebase.url}")
     private String firebaseUrl;
+
+    @InjectEventLogger
+    private EventLogger eventLogger;
 
     @PostConstruct
     private void init() {
@@ -28,7 +32,7 @@ public class FirebaseConfiguration {
 
             FirebaseApp.initializeApp(options);
         } catch (IOException e) {
-            log.debug("Firebase config is missing");
+            eventLogger.error(UserServiceNotableEvents.F_FIREBASE_CONFIG_LOAD_FAILURE);
         }
     }
 }
