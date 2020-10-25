@@ -1,6 +1,5 @@
 package com.wine.to.up.user.service.domain.entity;
 
-
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,8 +19,8 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Table(name = "list_catalogs")
-@IdClass(ListCatalog.class)
-public class ListCatalog implements AbstractEntity<Long>, Serializable {
+@IdClass(CatalogItem.class)
+public class CatalogItem implements AbstractEntity<Long>, Serializable {
     @Id
     @JoinColumn(name = "catalog_id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY)

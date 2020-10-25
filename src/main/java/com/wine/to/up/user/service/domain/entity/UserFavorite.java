@@ -20,8 +20,8 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Table(name = "list_favorites")
-@IdClass(ListFavorite.class)
-public class ListFavorite implements AbstractEntity<Long>, Serializable {
+@IdClass(UserFavorite.class)
+public class UserFavorite implements AbstractEntity<Long>, Serializable {
     @Id
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

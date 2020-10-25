@@ -1,7 +1,5 @@
 package com.wine.to.up.user.service.domain.dto;
 
-import com.wine.to.up.user.service.domain.entity.Catalog;
-import com.wine.to.up.user.service.domain.entity.Item;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +9,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class ListCatalogDto implements AbstractDto<Long> {
-    private Catalog catalog;
-    private Item item;
+public class UserSubscriptionsDto implements AbstractDto<Long> {
+    private UserDto user;
+    private ItemDto item;
 }
