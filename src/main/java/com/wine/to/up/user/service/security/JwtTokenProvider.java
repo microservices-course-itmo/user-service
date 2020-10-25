@@ -1,21 +1,24 @@
 package com.wine.to.up.user.service.security;
 
 import com.wine.to.up.user.service.domain.dto.UserDto;
-import com.wine.to.up.user.service.exception.JwtAuthenticationException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.Date;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
-import java.util.Date;
-
 @Component
 public class JwtTokenProvider {
-
     @Value("${jwt.token.secret}")
     private String secret;
+
+    private String secretEncoded;
 
     @Value("${jwt.token.expired.access}")
     private long accessValidityInMilliseconds;
@@ -25,7 +28,7 @@ public class JwtTokenProvider {
 
     @PostConstruct
     protected void init() {
-        secret = Base64.getEncoder().encodeToString(secret.getBytes());
+        secretEncoded = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
     public String createToken(UserDto userDto, boolean isAccessToken) {
@@ -36,30 +39,40 @@ public class JwtTokenProvider {
         claims.put("id", userDto.getId().toString());
 
         Date now = new Date();
-        Date validity;
 
-        if(isAccessToken){
-            validity = new Date(now.getTime() + accessValidityInMilliseconds);
+        long validityTimeMillis;
+        long currentTimeMillis = Instant.now().toEpochMilli();
+
+        if (isAccessToken) {
+            validityTimeMillis = currentTimeMillis + accessValidityInMilliseconds;
             claims.put("type", "ACCESS_TOKEN");
-        } else{
-            validity = new Date(now.getTime() + refreshValidityInMilliseconds);
+        } else {
+            validityTimeMillis = currentTimeMillis + refreshValidityInMilliseconds;
             claims.put("type", "REFRESH_TOKEN");
         }
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(new Date(validityTimeMillis))
+            .signWith(SignatureAlgorithm.HS256, secretEncoded)
+            .compact();
     }
 
     public String getPhoneNumber(String token) {
-        return (String) Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("phone_number");
+        return (String) Jwts.parser()
+            .setSigningKey(secretEncoded)
+            .parseClaimsJws(token)
+            .getBody()
+            .get("phone_number");
     }
 
     public String getTokenType(String token) {
-        return (String) Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("type");
+        return (String) Jwts.parser()
+            .setSigningKey(secretEncoded)
+            .parseClaimsJws(token)
+            .getBody()
+            .get("type");
     }
 
     public String resolveToken(HttpServletRequest req) {
@@ -73,11 +86,11 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretEncoded).parseClaimsJws(token);
             if (claims.getBody().getExpiration().before(new Date())) {
                 return false;
             }
-        } catch (JwtAuthenticationException | IllegalArgumentException | MalformedJwtException | SignatureException e) {
+        } catch (Exception ex) {
             return false;
         }
 

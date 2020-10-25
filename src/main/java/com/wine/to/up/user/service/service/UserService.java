@@ -3,15 +3,14 @@ package com.wine.to.up.user.service.service;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
-import com.wine.to.up.user.service.domain.response.UserResponse;
+import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.UserRepository;
+import java.time.Instant;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 
 @Service
 public class UserService extends AbstractService<Long, UserDto, User, UserRepository> {
@@ -50,9 +49,13 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
     public UserDto getByPhoneNumber(String phoneNumber) {
         User user = repository.findByPhoneNumber(phoneNumber);
         if (user == null) {
-            return null;
+            throw new EntityNotFoundException("User", phoneNumber);
         }
 
         return modelMapper.map(user, getDTOClass());
+    }
+
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return repository.findByPhoneNumber(phoneNumber) != null;
     }
 }
