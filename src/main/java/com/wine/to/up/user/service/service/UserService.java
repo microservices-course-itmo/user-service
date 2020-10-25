@@ -21,9 +21,6 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
     private final RoleService roleService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("${user.role.user.id}")
-    private Long ROLE_USER_ID;
-
     @Autowired
     public UserService(UserRepository repository,
                        ModelMapper modelMapper,
@@ -46,7 +43,7 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
 
     public UserDto signUp(UserRegistrationDto userRegistrationDto) {
         UserDto userDto = new UserDto();
-        userDto.setRole(roleService.getById(ROLE_USER_ID));
+        userDto.setRole(roleService.getByName("USER"));
         userDto.setPhoneNumber(userRegistrationDto.getPhoneNumber());
         userDto.setIsActivated(true);
         userDto.setCreateDate(Instant.now());
