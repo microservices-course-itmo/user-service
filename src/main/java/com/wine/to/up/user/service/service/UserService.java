@@ -3,8 +3,11 @@ package com.wine.to.up.user.service.service;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
-import com.wine.to.up.user.service.domain.response.UserResponse;
+import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.UserRepository;
+import com.wine.to.up.user.service.security.JwtTokenProvider;
+import javax.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +27,11 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
     @Autowired
     public UserService(UserRepository repository,
                        ModelMapper modelMapper,
-                       RoleService roleService) {
+                       RoleService roleService,
+                       JwtTokenProvider jwtTokenProvider) {
         super(repository, modelMapper);
         this.roleService = roleService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override

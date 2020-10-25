@@ -67,33 +67,6 @@ public class KafkaConfiguration {
         return properties;
     }
 
-
-    /**
-     * Creates consumer based on general properties.
-     * <p>
-     * Uses custom deserializer as the messages within single topic should be the same type. And
-     * the messages in different topics can have different types and require different deserializers
-     * <p>
-     * Binds the consumer of the topic with the object which is responsible for handling messages from
-     * this topic
-     * <p>
-     * From now on all the messages consumed from given topic will be delegate
-     * to {@link KafkaMessageHandler#handle(Object)} of the given handler
-     *
-     * @param consumerProperties is the general consumer properties. {@link #consumerProperties()}
-     * @param handler            which is responsible for handling messages from this topic
-     */
-    @Bean
-    BaseKafkaHandler<KafkaMessageSentEvent> userTopicMessagesHandler(Properties consumerProperties,
-                                                                     CatalogServiceApiProperties catalogServiceApiProperties,
-                                                                     CatalogTopicKafkaMessageHandler handler) {
-        //set appropriate deserializer for value
-        consumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, EventDeserializer.class.getName());
-
-        //bind consumer with topic name and with appropriate handler
-        return new BaseKafkaHandler<>(catalogServiceApiProperties.getNotificationTopic(), new KafkaConsumer<>(consumerProperties), handler);
-    }
-
     /**
      * Creates sender based on general properties. It helps to send single message to designated topic.
      * <p>
@@ -105,12 +78,40 @@ public class KafkaConfiguration {
      * @param metricsCollector         class encapsulating the logic of the metrics collecting and publishing
      */
     @Bean
-    KafkaMessageSender<KafkaMessageSentEvent> userTopicKafkaMessageSender(Properties producerProperties,
-                                                                          UserServiceApiProperties userServiceApiProperties,
-                                                                          UserServiceMetricsCollector metricsCollector) {
-        //set appropriate serializer for value
-        producerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, EventSerializer.class.getName());
+    KafkaMessageSender<KafkaMessageSentEvent> userTopicKafkaMessageSender(
+        Properties producerProperties,
+        UserServiceApiProperties userServiceApiProperties,
+        UserServiceMetricsCollector metricsCollector
+    ) {
 
-        return new KafkaMessageSender<>(new KafkaProducer<>(producerProperties), userServiceApiProperties.getWineResponseTopic(), metricsCollector);
+        //set appropriate serializer for value
+        producerProperties.setProperty(
+            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+            EventSerializer.class.getName()
+        );
+
+        return new KafkaMessageSender<>(
+            new KafkaProducer<>(producerProperties),
+            userServiceApiProperties.getWineResponseTopic(),
+            metricsCollector
+        );
+    }
+
+    @Bean
+    BaseKafkaHandler<KafkaMessageSentEvent> catalogTopicMessageHandler(
+        Properties consumerProperties,
+        CatalogServiceApiProperties catalogServiceApiProperties,
+        CatalogTopicKafkaMessageHandler messageHandler
+    ) {
+        consumerProperties.setProperty(
+            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+            EventDeserializer.class.getName()
+        );
+
+        return new BaseKafkaHandler<>(
+            catalogServiceApiProperties.getNotificationTopic(),
+            new KafkaConsumer<>(consumerProperties),
+            messageHandler
+        );
     }
 }
