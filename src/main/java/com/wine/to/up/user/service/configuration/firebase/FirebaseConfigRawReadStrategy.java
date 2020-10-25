@@ -1,7 +1,5 @@
 package com.wine.to.up.user.service.configuration.firebase;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
