@@ -7,7 +7,7 @@ public enum UserServiceNotableEvents implements NotableEvent {
     I_CONTROLLER_RECEIVED_MESSAGE("Message: {}"),
     W_SOME_WARN_EVENT("Warn situation. Description: {}"),
     F_FIREBASE_CONFIG_LOAD_FAILURE("Fatal: firebase config is missing. {}"),
-    W_KAFKA_MESSAGE_DESERIALIZATION_FAILURE("Warning: message cannot be deserialized");
+    W_KAFKA_MESSAGE_DESERIALIZATION_FAILURE("Warning: message cannot be deserialized. {}");
 
 
     private final String template;
