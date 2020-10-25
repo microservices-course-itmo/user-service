@@ -6,15 +6,12 @@ import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.UserRepository;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
+import java.time.Instant;
 import javax.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 
 @Service
 public class UserService extends AbstractService<Long, UserDto, User, UserRepository> {
@@ -52,7 +49,7 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
 
     public UserDto getCurrentUserInfo(HttpServletRequest httpServletRequest) {
         return this.getByPhoneNumber(jwtTokenProvider.getPhoneNumber(
-                jwtTokenProvider.resolveToken(httpServletRequest)));
+            jwtTokenProvider.resolveToken(httpServletRequest)));
     }
 
     @Transactional(readOnly = true)

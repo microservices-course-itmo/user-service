@@ -2,7 +2,6 @@ package com.wine.to.up.user.service.configuration;
 
 import com.wine.to.up.catalog.service.api.CatalogServiceApiProperties;
 import com.wine.to.up.commonlib.messaging.BaseKafkaHandler;
-import com.wine.to.up.commonlib.messaging.KafkaMessageHandler;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.UserServiceApiProperties;
 import com.wine.to.up.user.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
@@ -10,6 +9,7 @@ import com.wine.to.up.user.service.components.UserServiceMetricsCollector;
 import com.wine.to.up.user.service.messaging.CatalogTopicKafkaMessageHandler;
 import com.wine.to.up.user.service.messaging.serialization.EventDeserializer;
 import com.wine.to.up.user.service.messaging.serialization.EventSerializer;
+import java.util.Properties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
@@ -22,8 +22,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-
-import java.util.Properties;
 
 @Configuration
 public class KafkaConfiguration {
