@@ -8,5 +8,8 @@
 Если вы хотите запустить сервис в составе docker-compose выполните следующее:
 - выполните `mvn spring-boot:build-image`, это запустит сборку докер образа самого сервиса
 - выполните `docker-compose -f profiles/minimal-Infrastructure.yml -f profiles/user-service.yml up`
+
+Чтобы подтянуть user-service-api:
+- выполните `mvn -s settings.xml install`
  
  При изменении версии в сервиса в pom файле нужно изменить версию приложения в user-service.yml

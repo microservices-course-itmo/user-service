@@ -25,9 +25,12 @@
         <springfox-swagger-ui.version>2.9.2</springfox-swagger-ui.version>
         <micrometer.version>1.5.2</micrometer.version>
         <postgres.driver.version>42.2.14</postgres.driver.version>
+        <logstash.version>4.9</logstash.version>
+        <jjwt.version>0.9.1</jjwt.version>
+        <firebase-admin.version>7.0.1</firebase-admin.version>
 
         <service.commonlib.version>0.2.1-SNAPSHOT</service.commonlib.version>
-        <user.service.api.version>0.1.0-SNAPSHOT</user.service.api.version>
+        <user.service.api.version>0.1.2-SNAPSHOT</user.service.api.version>
 
         <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
         <flyway.version>6.5.1</flyway.version>
@@ -51,10 +54,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
 
         <!-- Db -->
         <dependency>
@@ -70,6 +69,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgres.driver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Required: Swagger -->
@@ -97,7 +101,21 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>4.9</version>
+            <version>${logstash.version}</version>
+        </dependency>
+
+        <!--Required: jwt-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+
+        <!--Required: firebase-->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>${firebase-admin.version}</version>
         </dependency>
 
         <!-- Recommended-->

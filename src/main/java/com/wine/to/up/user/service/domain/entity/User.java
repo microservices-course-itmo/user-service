@@ -2,8 +2,17 @@ package com.wine.to.up.user.service.domain.entity;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,7 +42,7 @@ public class User implements AbstractEntity<Long> {
 
     private String phoneNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private City city;
 
@@ -44,12 +53,11 @@ public class User implements AbstractEntity<Long> {
     private Instant createDate;
 
     @JoinColumn(name = "company_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Company company;
 
-    //TODO: optional
-    @JoinColumn(name = "role_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "role_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Role role;
 
     private String password;

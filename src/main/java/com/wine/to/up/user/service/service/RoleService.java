@@ -25,4 +25,8 @@ public class RoleService extends AbstractService<Long, RoleDto, Role, RoleReposi
     public Class<RoleDto> getDTOClass() {
         return RoleDto.class;
     }
+
+    public RoleDto getByName(String name) {
+        return this.modelMapper.map(this.repository.findByName(name), getDTOClass());
+    }
 }
