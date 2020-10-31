@@ -29,6 +29,7 @@ public class UpdatePriceHandler implements KafkaMessageHandler<UpdatePriceEvent>
     @Override
     public void handle(UpdatePriceEvent message) {
 
+        // todo: setFCM and IOS tokens
         List<UserTokens> userTokens = new ArrayList<>();
         subscriptionService.findUserIdsByWineId(Long.parseLong(message.getId())).stream().forEach(
                 s -> UserTokens.newBuilder().setUserId(s).build()

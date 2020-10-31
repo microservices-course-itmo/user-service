@@ -43,6 +43,7 @@ public class SubscriptionService
         return listSubscriptionDtoList;
     }
 
+    // todo: remove and add getFCM & get IOS tokens
     public WineResponse getPushTokensByWineId(Long id) {
         WineResponse response = new WineResponse();
         List<UserSubscriptionDto> listSubscription = this.findUsersByWineId(id);
