@@ -2,8 +2,10 @@ package com.wine.to.up.user.service.security;
 
 import com.wine.to.up.commonlib.annotations.InjectEventLogger;
 import com.wine.to.up.commonlib.logging.EventLogger;
+import com.wine.to.up.user.service.domain.dto.TokenDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.logging.UserServiceNotableEvents;
+import com.wine.to.up.user.service.service.TokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -32,6 +34,18 @@ public class JwtTokenProvider {
     @InjectEventLogger
     private EventLogger eventLogger;
 
+    @Value("${default.jwt.token.type.access}")
+    private String accessTokenType;
+
+    @Value("${default.jwt.token.type.refresh}")
+    private String refreshTokenType;
+
+    private final TokenService tokenService;
+
+    public JwtTokenProvider(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
+
     @PostConstruct
     protected void init() {
         secretEncoded = Base64.getEncoder().encodeToString(secret.getBytes());
@@ -51,10 +65,10 @@ public class JwtTokenProvider {
 
         if (isAccessToken) {
             validityTimeMillis = currentTimeMillis + accessValidityInMilliseconds;
-            claims.put("type", "ACCESS_TOKEN");
+            claims.put("type", accessTokenType);
         } else {
             validityTimeMillis = currentTimeMillis + refreshValidityInMilliseconds;
-            claims.put("type", "REFRESH_TOKEN");
+            claims.put("type", refreshTokenType);
         }
 
         return Jwts.builder()
@@ -90,10 +104,17 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, UserDto user, String tokenType) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretEncoded).parseClaimsJws(token);
+            if ((tokenType.equals(accessTokenType) && !tokenService.isExistsAccessToken(user, token)) ||
+                    (tokenType.equals(refreshTokenType) && !tokenService.isExistsRefreshToken(user, token))) {
+                return false;
+            }
+
             if (claims.getBody().getExpiration().before(new Date())) {
+                TokenDto tokenDto = tokenService.getTokenDto(token);
+                tokenService.delete(tokenDto);
                 return false;
             }
         } catch (Exception ex) {

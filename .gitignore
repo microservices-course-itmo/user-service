@@ -21,4 +21,4 @@ bin
 .editorconfig
 /**/application-dev.properties
 src/main/resources/firebase.json
-firebase.json
+src/main/resources/firebase.json

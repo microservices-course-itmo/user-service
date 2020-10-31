@@ -63,6 +63,7 @@ CREATE TABLE list_catalogs
 
 CREATE TABLE tokens
 (
+    "id"                 bigserial PRIMARY KEY,
     "user_id"            bigint,
     "token_access"       varchar,
     "token_refresh"      varchar,

@@ -8,10 +8,13 @@ import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.user.service.api.dto.AuthenticationResponse;
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
+import com.wine.to.up.user.service.domain.dto.TokenDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
+import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.logging.UserServiceNotableEvents;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
+import com.wine.to.up.user.service.service.TokenService;
 import com.wine.to.up.user.service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class AuthenticationController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final TokenService tokenService;
 
     @InjectEventLogger
     private EventLogger eventLogger;
@@ -57,9 +63,20 @@ public class AuthenticationController {
         }
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        TokenDto tokenDto = new TokenDto();
+        Date date = new Date();
 
-        authenticationResponse.setAccessToken(jwtTokenProvider.createToken(user, true));
-        authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(user, false));
+        String accessToken = jwtTokenProvider.createToken(user, true);
+        String refreshToken = jwtTokenProvider.createToken(user, false);
+
+        tokenDto.setAccessToken(accessToken);
+        tokenDto.setRefreshToken(refreshToken);
+        tokenDto.setUser(modelMapper.map(user, User.class));
+        tokenDto.setTokenRefreshDate(date.toString());
+        tokenService.create(tokenDto);
+
+        authenticationResponse.setAccessToken(accessToken);
+        authenticationResponse.setRefreshToken(refreshToken);
         authenticationResponse.setUser(modelMapper.map(user, UserResponse.class));
 
         return ResponseEntity.ok(authenticationResponse);
@@ -67,23 +84,39 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthenticationResponse> refresh(@RequestParam String refreshToken) {
-        String tokenType = jwtTokenProvider.getTokenType(refreshToken);
+        String tokenType;
+        String phoneNumber;
+        UserDto user;
 
-        if (!jwtTokenProvider.validateToken(refreshToken) && tokenType.equals("REFRESH_TOKEN")) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
-        if (!tokenType.equals("REFRESH_TOKEN")) {
+        try {
+            tokenType = jwtTokenProvider.getTokenType(refreshToken);
+            phoneNumber = jwtTokenProvider.getPhoneNumber(refreshToken);
+            user = userService.getByPhoneNumber(phoneNumber);
+        } catch (Exception ex) {
+            eventLogger.debug(UserServiceNotableEvents.W_AUTH_FAILURE, ex.getMessage());
             return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
         }
 
-        String phoneNumber = jwtTokenProvider.getPhoneNumber(refreshToken);
-        UserDto user = userService.getByPhoneNumber(phoneNumber);
+        if (!tokenType.equals("REFRESH_TOKEN") || !jwtTokenProvider.validateToken(refreshToken, user, tokenType)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        TokenDto tokenDto = tokenService.getTokenDto(refreshToken);
+        Date date = new Date();
+
+        String accessToken = jwtTokenProvider.createToken(user, true);
+        String newRefreshToken = jwtTokenProvider.createToken(user, false);
+
+        tokenDto.setAccessToken(accessToken);
+        tokenDto.setRefreshToken(refreshToken);
+        tokenDto.setUser(modelMapper.map(user, User.class));
+        tokenDto.setTokenRefreshDate(date.toString());
+        tokenService.update(tokenDto);
 
         AuthenticationResponse authenticationResponse =
             new AuthenticationResponse()
-                .setAccessToken(jwtTokenProvider.createToken(user, true))
-                .setRefreshToken(jwtTokenProvider.createToken(user, false))
+                .setAccessToken(accessToken)
+                .setRefreshToken(newRefreshToken)
                 .setUser(modelMapper.map(user, UserResponse.class));
 
         return ResponseEntity.ok(authenticationResponse);
@@ -91,7 +124,20 @@ public class AuthenticationController {
 
     @PostMapping("/validate")
     public ResponseEntity<Void> validate(@RequestParam String token) {
-        if (jwtTokenProvider.validateToken(token)) {
+        String tokenType;
+        String phoneNumber;
+        UserDto user;
+
+        try {
+            tokenType = jwtTokenProvider.getTokenType(token);
+            phoneNumber = jwtTokenProvider.getPhoneNumber(token);
+            user = userService.getByPhoneNumber(phoneNumber);
+        } catch (Exception ex) {
+            eventLogger.debug(UserServiceNotableEvents.W_AUTH_FAILURE, ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+        }
+
+        if (jwtTokenProvider.validateToken(token, user, tokenType)) {
             return ResponseEntity.ok().build();
         }
 

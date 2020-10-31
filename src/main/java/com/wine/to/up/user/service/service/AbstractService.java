@@ -9,6 +9,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Contains common CRUD operations and mapping Entity <-> Dto
  *
@@ -48,6 +51,13 @@ public abstract class AbstractService
             ),
             this.getDTOClass()
         );
+    }
+
+    public List<D> mapList(List<E> source) {
+        return source
+                .stream()
+                .map(element -> modelMapper.map(element, getDTOClass()))
+                .collect(Collectors.toList());
     }
 
     public void update(D entity) {
