@@ -56,4 +56,12 @@ public class SubscriptionService
         response.setUserTokens(users);
         return response;
     }
+
+    public List<Long> findUserIdsByWineId(Long id) {
+        List<Long> userIds = new ArrayList<>();
+        for (UserSubscription listSubscriptionDto : listSubscriptionRepository.findAllByItemId(id)) {
+            userIds.add(listSubscriptionDto.getUser().getId());
+        }
+        return userIds;
+    }
 }
