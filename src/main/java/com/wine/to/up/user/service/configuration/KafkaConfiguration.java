@@ -1,14 +1,18 @@
 package com.wine.to.up.user.service.configuration;
 
 import com.wine.to.up.catalog.service.api.CatalogServiceApiProperties;
+import com.wine.to.up.catalog.service.api.message.UpdatePriceEventOuterClass.UpdatePriceEvent;
 import com.wine.to.up.commonlib.messaging.BaseKafkaHandler;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.UserServiceApiProperties;
-import com.wine.to.up.user.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
+import com.wine.to.up.user.service.api.message.WinePriceUpdatedWithTokensEventOuterClass.WinePriceUpdatedWithTokensEvent;
 import com.wine.to.up.user.service.components.UserServiceMetricsCollector;
-import com.wine.to.up.user.service.messaging.CatalogTopicKafkaMessageHandler;
-import com.wine.to.up.user.service.messaging.serialization.EventDeserializer;
-import com.wine.to.up.user.service.messaging.serialization.EventSerializer;
+import com.wine.to.up.user.service.messaging.UpdatePriceHandler;
+import com.wine.to.up.user.service.messaging.WinePriceUpdateWithTokensHandler;
+import com.wine.to.up.user.service.messaging.serialization.UpdatePriceDeserializer;
+import com.wine.to.up.user.service.messaging.serialization.UpdatePriceSerializer;
+import com.wine.to.up.user.service.messaging.serialization.WinePriceUpdatedWithTokensDeserializer;
+import com.wine.to.up.user.service.messaging.serialization.WinePriceUpdatedWithTokensSerializer;
 import java.util.Properties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -46,7 +50,6 @@ public class KafkaConfiguration {
         Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-
         return properties;
     }
 
@@ -60,7 +63,8 @@ public class KafkaConfiguration {
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, applicationConsumerGroupId);
         //in case of consumer crashing, new consumer will read all messages from committed offset
-        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.name().toLowerCase());
+        properties
+            .setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.name().toLowerCase());
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         return properties;
     }
@@ -76,38 +80,75 @@ public class KafkaConfiguration {
      * @param metricsCollector         class encapsulating the logic of the metrics collecting and publishing
      */
     @Bean
-    KafkaMessageSender<KafkaMessageSentEvent> userTopicKafkaMessageSender(
+    KafkaMessageSender<WinePriceUpdatedWithTokensEvent> wineReviewedEventSender(
         Properties producerProperties,
         UserServiceApiProperties userServiceApiProperties,
         UserServiceMetricsCollector metricsCollector
     ) {
-
         //set appropriate serializer for value
         producerProperties.setProperty(
             ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-            EventSerializer.class.getName()
+            WinePriceUpdatedWithTokensSerializer.class.getName()
         );
 
         return new KafkaMessageSender<>(
             new KafkaProducer<>(producerProperties),
-            userServiceApiProperties.getWineResponseTopic(),
+            userServiceApiProperties.getWinePriceUpdatedWithTokensTopicName(),
             metricsCollector
         );
     }
 
     @Bean
-    BaseKafkaHandler<KafkaMessageSentEvent> catalogTopicMessageHandler(
+    BaseKafkaHandler<UpdatePriceEvent> updatePriceEventHandler(
         Properties consumerProperties,
         CatalogServiceApiProperties catalogServiceApiProperties,
-        CatalogTopicKafkaMessageHandler messageHandler
+        UpdatePriceHandler messageHandler
     ) {
         consumerProperties.setProperty(
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-            EventDeserializer.class.getName()
+            UpdatePriceDeserializer.class.getName()
         );
 
         return new BaseKafkaHandler<>(
-            catalogServiceApiProperties.getNotificationTopic(),
+            catalogServiceApiProperties.getEventTopic(),
+            new KafkaConsumer<>(consumerProperties),
+            messageHandler
+        );
+    }
+
+    // for test purposes, todo remove
+    @Bean
+    KafkaMessageSender<UpdatePriceEvent> catalogPriceUpdateEventSender(
+        Properties producerProperties,
+        CatalogServiceApiProperties catalogServiceApiProperties,
+        UserServiceMetricsCollector metricsCollector
+    ) {
+        producerProperties.setProperty(
+            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+            UpdatePriceSerializer.class.getName()
+        );
+
+        return new KafkaMessageSender<>(
+            new KafkaProducer<>(producerProperties),
+            catalogServiceApiProperties.getEventTopic(),
+            metricsCollector
+        );
+    }
+
+    // for test purposes, todo remove
+    @Bean
+    BaseKafkaHandler<WinePriceUpdatedWithTokensEvent> updatePriceWithTokensHandler(
+        Properties consumerProperties,
+        UserServiceApiProperties userServiceApiProperties,
+        WinePriceUpdateWithTokensHandler messageHandler
+    ) {
+        consumerProperties.setProperty(
+            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+            WinePriceUpdatedWithTokensDeserializer.class.getName()
+        );
+
+        return new BaseKafkaHandler<>(
+            userServiceApiProperties.getWinePriceUpdatedWithTokensTopicName(),
             new KafkaConsumer<>(consumerProperties),
             messageHandler
         );

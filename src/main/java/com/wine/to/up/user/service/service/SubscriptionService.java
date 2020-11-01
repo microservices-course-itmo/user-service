@@ -1,7 +1,7 @@
 package com.wine.to.up.user.service.service;
 
 import com.wine.to.up.user.service.api.dto.UserTokens;
-import com.wine.to.up.user.service.api.dto.WineResponse;
+import com.wine.to.up.user.service.api.dto.WinePriceUpdatedResponse;
 import com.wine.to.up.user.service.domain.dto.UserSubscriptionDto;
 import com.wine.to.up.user.service.domain.entity.UserSubscription;
 import com.wine.to.up.user.service.repository.UserSubscriptionsRepository;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SubscriptionService
-    extends AbstractService<Long, UserSubscriptionDto, UserSubscription, UserSubscriptionsRepository> {
+    extends AbstractService<String, UserSubscriptionDto, UserSubscription, UserSubscriptionsRepository> {
     private final UserSubscriptionsRepository listSubscriptionRepository;
 
     @Autowired
@@ -35,7 +35,7 @@ public class SubscriptionService
         return UserSubscriptionDto.class;
     }
 
-    public List<UserSubscriptionDto> findUsersByWineId(Long id) {
+    public List<UserSubscriptionDto> findUsersByWineId(String id) {
         List<UserSubscriptionDto> listSubscriptionDtoList = new ArrayList<>();
         for (UserSubscription listSubscriptionDto : listSubscriptionRepository.findAllByItemId(id)) {
             listSubscriptionDtoList.add(modelMapper.map(listSubscriptionDto, getDTOClass()));
@@ -43,8 +43,9 @@ public class SubscriptionService
         return listSubscriptionDtoList;
     }
 
-    public WineResponse getPushTokensByWineId(Long id) {
-        WineResponse response = new WineResponse();
+    // todo remove and add getFCM & get IOS tokens
+    public WinePriceUpdatedResponse getPushTokensByWineId(String id) {
+        WinePriceUpdatedResponse response = new WinePriceUpdatedResponse();
         List<UserSubscriptionDto> listSubscription = this.findUsersByWineId(id);
         List<UserTokens> users = new ArrayList<>();
         response.setWineId(id);
@@ -55,5 +56,13 @@ public class SubscriptionService
         }
         response.setUserTokens(users);
         return response;
+    }
+
+    public List<Long> findUserIdsByWineId(String id) {
+        List<Long> userIds = new ArrayList<>();
+        for (UserSubscription listSubscriptionDto : listSubscriptionRepository.findAllByItemId(id)) {
+            userIds.add(listSubscriptionDto.getUser().getId());
+        }
+        return userIds;
     }
 }
