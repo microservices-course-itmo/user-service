@@ -46,6 +46,7 @@ public class KafkaConfiguration {
     public Properties producerProperties() {
         Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         return properties;
     }
 
@@ -60,6 +61,7 @@ public class KafkaConfiguration {
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, applicationConsumerGroupId);
         //in case of consumer crashing, new consumer will read all messages from committed offset
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.name().toLowerCase());
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         return properties;
     }
 
@@ -79,6 +81,12 @@ public class KafkaConfiguration {
         UserServiceApiProperties userServiceApiProperties,
         UserServiceMetricsCollector metricsCollector
     ) {
+        //set appropriate serializer for value
+        producerProperties.setProperty(
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                EventSerializer.class.getName()
+        );
+
         return new KafkaMessageSender<>(
             new KafkaProducer<>(producerProperties),
             userServiceApiProperties.getWineResponseTopic(),
@@ -92,6 +100,11 @@ public class KafkaConfiguration {
             CatalogServiceApiProperties catalogServiceApiProperties,
             UpdatePriceHandler messageHandler
     ) {
+        consumerProperties.setProperty(
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                EventDeserializer.class.getName()
+        );
+
         return new BaseKafkaHandler<>(
             catalogServiceApiProperties.getEventTopic(),
             new KafkaConsumer<>(consumerProperties),
