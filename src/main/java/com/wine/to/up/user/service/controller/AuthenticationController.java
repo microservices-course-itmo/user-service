@@ -72,7 +72,7 @@ public class AuthenticationController {
         tokenDto.setAccessToken(accessToken);
         tokenDto.setRefreshToken(refreshToken);
         tokenDto.setUser(modelMapper.map(user, User.class));
-        tokenDto.setTokenRefreshDate(date.toString());
+        tokenDto.setTokenRefreshDate(String.valueOf(date.getTime()));
         tokenService.create(tokenDto);
 
         authenticationResponse.setAccessToken(accessToken);
@@ -110,7 +110,7 @@ public class AuthenticationController {
         tokenDto.setAccessToken(accessToken);
         tokenDto.setRefreshToken(refreshToken);
         tokenDto.setUser(modelMapper.map(user, User.class));
-        tokenDto.setTokenRefreshDate(date.toString());
+        tokenDto.setTokenRefreshDate(String.valueOf(date.getTime()));
         tokenService.update(tokenDto);
 
         AuthenticationResponse authenticationResponse =

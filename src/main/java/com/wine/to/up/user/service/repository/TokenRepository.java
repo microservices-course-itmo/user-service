@@ -10,7 +10,7 @@ import java.util.List;
 public interface TokenRepository extends CrudRepository<Token, Long> {
     List<Token> findByUserId(Long userId);
 
-    Token findByRefreshToken(String refresh_token);
+    Token findByRefreshToken(String refreshToken);
 
-    Token findByAccessToken(String access_token);
+    Token findByAccessToken(String accessToken);
 }
