@@ -12,6 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserServiceMetricsCollector extends CommonMetricsCollector {
     public UserServiceMetricsCollector() {
-        super("user-service");
+        super("user_service");
     }
 }
