@@ -17,6 +17,7 @@ import com.wine.to.up.user.service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,9 @@ public class AuthenticationController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final ModelMapper modelMapper;
+
+    @Value("${default.jwt.token.stub}")
+    private String TOKEN_STUB;
 
     @InjectEventLogger
     private EventLogger eventLogger;
@@ -115,7 +119,7 @@ public class AuthenticationController {
 
     @PostMapping("/validate")
     public ResponseEntity<Void> validate(@RequestParam String token) {
-        if (token.equals("123") ||
+        if (token.equals(TOKEN_STUB) ||
                 jwtTokenProvider.validateToken(token)) {
             return ResponseEntity.ok().build();
         }
