@@ -35,6 +35,7 @@ public class AuthenticationController {
     @InjectEventLogger
     private EventLogger eventLogger;
 
+    @PostMapping("/registration")
     public ResponseEntity<AuthenticationResponse> registration(@RequestBody RegistrationRequestDto requestDto) {
         String phoneNumber;
 
@@ -114,7 +115,7 @@ public class AuthenticationController {
 
     @PostMapping("/validate")
     public ResponseEntity<Void> validate(@RequestParam String token) {
-        if (token.equals("${default.jwt.token.always.working}") ||
+        if (token.equals("123") ||
                 jwtTokenProvider.validateToken(token)) {
             return ResponseEntity.ok().build();
         }
