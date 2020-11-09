@@ -1,7 +1,7 @@
 package com.wine.to.up.user.service.configuration;
 
 import com.wine.to.up.catalog.service.api.CatalogServiceApiProperties;
-import com.wine.to.up.catalog.service.api.message.UpdatePriceEventOuterClass.UpdatePriceEvent;
+import com.wine.to.up.catalog.service.api.message.UpdatePriceMessageSentEventOuterClass.UpdatePriceMessageSentEvent;
 import com.wine.to.up.commonlib.messaging.BaseKafkaHandler;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.UserServiceApiProperties;
@@ -99,7 +99,7 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    BaseKafkaHandler<UpdatePriceEvent> updatePriceEventHandler(
+    BaseKafkaHandler<UpdatePriceMessageSentEvent> updatePriceEventHandler(
         Properties consumerProperties,
         CatalogServiceApiProperties catalogServiceApiProperties,
         UpdatePriceHandler messageHandler
@@ -118,7 +118,7 @@ public class KafkaConfiguration {
 
     // for test purposes, todo remove
     @Bean
-    KafkaMessageSender<UpdatePriceEvent> catalogPriceUpdateEventSender(
+    KafkaMessageSender<UpdatePriceMessageSentEvent> catalogPriceUpdateEventSender(
         Properties producerProperties,
         CatalogServiceApiProperties catalogServiceApiProperties,
         UserServiceMetricsCollector metricsCollector

@@ -1,7 +1,7 @@
 package com.wine.to.up.user.service.messaging;
 
-import com.wine.to.up.catalog.service.api.message.UpdatePriceEventOuterClass.UpdatePriceEvent;
 import com.wine.to.up.commonlib.messaging.KafkaMessageHandler;
+import com.wine.to.up.catalog.service.api.message.UpdatePriceMessageSentEventOuterClass.UpdatePriceMessageSentEvent;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.message.UserTokensOuterClass.UserTokens;
 import com.wine.to.up.user.service.api.message.WinePriceUpdatedWithTokensEventOuterClass.WinePriceUpdatedWithTokensEvent;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class UpdatePriceHandler implements KafkaMessageHandler<UpdatePriceEvent> {
+public class UpdatePriceHandler implements KafkaMessageHandler<UpdatePriceMessageSentEvent> {
     private final SubscriptionService subscriptionService;
     private final KafkaMessageSender<WinePriceUpdatedWithTokensEvent> wineReviewedEventSender;
 
@@ -26,7 +26,7 @@ public class UpdatePriceHandler implements KafkaMessageHandler<UpdatePriceEvent>
     }
 
     @Override
-    public void handle(UpdatePriceEvent message) {
+    public void handle(UpdatePriceMessageSentEvent message) {
         // todo: setFCM and IOS tokens
         List<UserTokens> userTokens = new ArrayList<>();
         subscriptionService.findUserIdsByWineId(message.getId()).forEach(

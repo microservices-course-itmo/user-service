@@ -8,6 +8,7 @@ import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.user.service.api.dto.AuthenticationResponse;
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
+import com.wine.to.up.user.service.domain.dto.RegistrationRequestDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.logging.UserServiceNotableEvents;
@@ -16,6 +17,7 @@ import com.wine.to.up.user.service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,8 +33,37 @@ public class AuthenticationController {
     private final UserService userService;
     private final ModelMapper modelMapper;
 
+    @Value("${default.jwt.token.stub}")
+    private String TOKEN_STUB;
+
     @InjectEventLogger
     private EventLogger eventLogger;
+
+    @PostMapping("/registration")
+    public ResponseEntity<AuthenticationResponse> registration(@RequestBody RegistrationRequestDto requestDto) {
+        String phoneNumber;
+
+        try {
+            String idToken = requestDto.getFireBaseToken();
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            phoneNumber = (String) decodedToken.getClaims().get("phone_number");
+        } catch (FirebaseAuthException e) {
+            eventLogger.debug(UserServiceNotableEvents.W_AUTH_FAILURE, "Cannot verify firebase token");
+            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+        }
+
+        UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+        userRegistrationDto.setPhoneNumber(phoneNumber);
+        UserDto user = userService.signUp(userRegistrationDto);
+
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+
+        authenticationResponse.setAccessToken(jwtTokenProvider.createToken(user, true));
+        authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(user, false));
+        authenticationResponse.setUser(modelMapper.map(user, UserResponse.class));
+
+        return ResponseEntity.ok(authenticationResponse);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto requestDto) {
@@ -44,17 +75,14 @@ public class AuthenticationController {
             phoneNumber = (String) decodedToken.getClaims().get("phone_number");
         } catch (FirebaseAuthException e) {
             eventLogger.debug(UserServiceNotableEvents.W_AUTH_FAILURE, "Cannot verify firebase token");
+            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+        }
+
+        if (!userService.existsByPhoneNumber(phoneNumber)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        UserDto user;
-        if (!userService.existsByPhoneNumber(phoneNumber)) {
-            UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
-            userRegistrationDto.setPhoneNumber(phoneNumber);
-            user = userService.signUp(userRegistrationDto);
-        } else {
-            user = userService.getByPhoneNumber(phoneNumber);
-        }
+        UserDto user = userService.getByPhoneNumber(phoneNumber);
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
@@ -91,7 +119,8 @@ public class AuthenticationController {
 
     @PostMapping("/validate")
     public ResponseEntity<Void> validate(@RequestParam String token) {
-        if (jwtTokenProvider.validateToken(token)) {
+        if (token.equals(TOKEN_STUB) ||
+                jwtTokenProvider.validateToken(token)) {
             return ResponseEntity.ok().build();
         }
 
