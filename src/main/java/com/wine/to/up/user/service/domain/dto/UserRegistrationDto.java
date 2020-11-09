@@ -18,6 +18,7 @@ public class UserRegistrationDto implements AbstractDto<Long> {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate birthDate;
+    private String name;
     private String sex;
     private String email;
     private String phoneNumber;

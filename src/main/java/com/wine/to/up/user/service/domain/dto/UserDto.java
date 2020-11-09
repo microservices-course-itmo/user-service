@@ -39,6 +39,7 @@ public class UserDto implements AbstractDto<Long> {
     @JsonIgnore
     private String password;
 
+    private String name;
     private String sex;
     private String email;
     private String phoneNumber;
