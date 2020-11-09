@@ -39,12 +39,12 @@ public class AuthenticationController {
     @InjectEventLogger
     private EventLogger eventLogger;
 
-    @ApiOperation(value = "User registration",
-            notes = "Description: Creates new user and returns authenticationResponse with token pair",
-            response = AuthenticationResponse.class,
-            responseContainer = "ResponseEntity")
-    @ApiResponses(
-            @ApiResponse(code = 418, message = "Cannot verify token"))
+//    @ApiOperation(value = "User registration",
+//            notes = "Description: Creates new user and returns authenticationResponse with token pair",
+//            response = AuthenticationResponse.class,
+//            responseContainer = "ResponseEntity")
+//    @ApiResponses(
+//            @ApiResponse(code = 418, message = "Cannot verify token"))
     @PostMapping("/signup")
     public ResponseEntity<AuthenticationResponse> registration(@RequestBody RegistrationRequestDto requestDto) {
 

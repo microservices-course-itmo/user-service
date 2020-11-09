@@ -46,7 +46,6 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                                 new ResponseMessageBuilder()
                                         .code(401)
                                         .message("custom PostMethod error message 401")
-                                        .responseModel(new ModelRef("Error"))
                                         .build(),
                                 new ResponseMessageBuilder()
                                         .code(403)
