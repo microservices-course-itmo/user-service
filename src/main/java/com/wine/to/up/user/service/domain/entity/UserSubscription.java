@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Table(name = "list_subscriptions")
 @IdClass(UserSubscription.class)
-public class UserSubscription implements AbstractEntity<Long>, Serializable {
+public class UserSubscription implements AbstractEntity<String>, Serializable {
     @Id
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

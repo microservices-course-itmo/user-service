@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserSubscriptionsRepository extends CrudRepository<UserSubscription, Long> {
-    Iterable<UserSubscription> findAllByItemId(Long itemId);
+public interface UserSubscriptionsRepository extends CrudRepository<UserSubscription, String> {
+    Iterable<UserSubscription> findAllByItemId(String itemId);
 }

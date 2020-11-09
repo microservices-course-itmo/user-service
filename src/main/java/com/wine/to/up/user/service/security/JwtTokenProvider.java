@@ -1,6 +1,9 @@
 package com.wine.to.up.user.service.security;
 
+import com.wine.to.up.commonlib.annotations.InjectEventLogger;
+import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.user.service.domain.dto.UserDto;
+import com.wine.to.up.user.service.logging.UserServiceNotableEvents;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -25,6 +28,9 @@ public class JwtTokenProvider {
 
     @Value("${jwt.token.expired.refresh}")
     private long refreshValidityInMilliseconds;
+
+    @InjectEventLogger
+    private EventLogger eventLogger;
 
     @PostConstruct
     protected void init() {
@@ -91,6 +97,7 @@ public class JwtTokenProvider {
                 return false;
             }
         } catch (Exception ex) {
+            eventLogger.debug(UserServiceNotableEvents.W_AUTH_FAILURE, ex.getMessage());
             return false;
         }
 
