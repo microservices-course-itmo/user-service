@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Table(name = "items")
-public class Item implements AbstractEntity<Long> {
+public class Item implements AbstractEntity<String> {
     @Id
     private String id;
 
