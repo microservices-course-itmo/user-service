@@ -94,7 +94,7 @@ public class KafkaConfiguration {
         return new KafkaMessageSender<>(
             new KafkaProducer<>(producerProperties),
             userServiceApiProperties.getWinePriceUpdatedWithTokensTopicName(),
-            metricsCollector
+                metricsCollector
         );
     }
 
