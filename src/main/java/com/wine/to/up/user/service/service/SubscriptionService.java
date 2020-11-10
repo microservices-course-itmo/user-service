@@ -2,7 +2,11 @@ package com.wine.to.up.user.service.service;
 
 import com.wine.to.up.user.service.api.dto.UserTokens;
 import com.wine.to.up.user.service.api.dto.WinePriceUpdatedResponse;
+import com.wine.to.up.user.service.domain.dto.ItemDto;
+import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserSubscriptionDto;
+import com.wine.to.up.user.service.domain.entity.Item;
+import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.domain.entity.UserSubscription;
 import com.wine.to.up.user.service.repository.UserSubscriptionsRepository;
 import java.util.ArrayList;
@@ -16,13 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SubscriptionService
     extends AbstractService<String, UserSubscriptionDto, UserSubscription, UserSubscriptionsRepository> {
-    private final UserSubscriptionsRepository listSubscriptionRepository;
+    private final UserService userService;
+    private final ItemService itemService;
 
     @Autowired
     public SubscriptionService(UserSubscriptionsRepository repository, ModelMapper modelMapper,
-                               UserSubscriptionsRepository listSubscriptionRepository) {
+                               UserService userService, ItemService itemService) {
         super(repository, modelMapper);
-        this.listSubscriptionRepository = listSubscriptionRepository;
+        this.userService = userService;
+        this.itemService = itemService;
     }
 
     @Override
@@ -37,7 +43,7 @@ public class SubscriptionService
 
     public List<UserSubscriptionDto> findUsersByWineId(String id) {
         List<UserSubscriptionDto> listSubscriptionDtoList = new ArrayList<>();
-        for (UserSubscription listSubscriptionDto : listSubscriptionRepository.findAllByItemId(id)) {
+        for (UserSubscription listSubscriptionDto : repository.findAllByItemId(id)) {
             listSubscriptionDtoList.add(modelMapper.map(listSubscriptionDto, getDTOClass()));
         }
         return listSubscriptionDtoList;
@@ -60,9 +66,35 @@ public class SubscriptionService
 
     public List<Long> findUserIdsByWineId(String id) {
         List<Long> userIds = new ArrayList<>();
-        for (UserSubscription listSubscriptionDto : listSubscriptionRepository.findAllByItemId(id)) {
+        for (UserSubscription listSubscriptionDto : repository.findAllByItemId(id)) {
             userIds.add(listSubscriptionDto.getUser().getId());
         }
         return userIds;
+    }
+
+    public List<UserDto> getUsersByItemId(String id) {
+        List<UserDto> userDtoList = new ArrayList<>();
+        for (UserSubscription userSubscription : repository.findAllByItemId(id)) {
+            userDtoList.add(modelMapper.map(userSubscription, getDTOClass()).getUser());
+        }
+        return userDtoList;
+    }
+
+    public void removeUserSubscription(String itemId, Long userId) {
+        User user = modelMapper.map(userService.getById(userId), userService.getEntityClass());
+        Item item = modelMapper.map(itemService.getById(itemId), itemService.getEntityClass());
+        repository.deleteByItemAndUser(item, user);
+    }
+
+    public void addUserSubscription(String itemId, Long userId) {
+        this.create(new UserSubscriptionDto(userService.getById(userId), itemService.getById(itemId)));
+    }
+
+    public List<ItemDto> getItemsByUserId(Long userId) {
+        List<ItemDto> itemDtoList = new ArrayList<>();
+        for (UserSubscription userSubscription : repository.findAllByUserId(userId)) {
+            itemDtoList.add(modelMapper.map(userSubscription, getDTOClass()).getItem());
+        }
+        return itemDtoList;
     }
 }
