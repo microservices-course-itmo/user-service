@@ -61,16 +61,20 @@ public class UserController {
 
     @PostMapping(path = "/{userId}/unsubscribe/{itemId}")
     public ResponseEntity<Void> removeUserSubscription(
+//            HttpServletRequest httpServletRequest,
             @PathVariable Long userId,
             @PathVariable String itemId) {
+//        Long userId = userService.getCurrentUserInfo(httpServletRequest).getId();
         subscriptionService.removeUserSubscription(itemId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(path = "/{userId}/subscribe/{itemId}")
     public ResponseEntity<Void> addUserSubscription(
+//            HttpServletRequest httpServletRequest,
             @PathVariable Long userId,
             @PathVariable String itemId) {
+//        Long userId = userService.getCurrentUserInfo(httpServletRequest).getId();
         subscriptionService.addUserSubscription(itemId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
