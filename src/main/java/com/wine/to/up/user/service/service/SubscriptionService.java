@@ -75,25 +75,27 @@ public class SubscriptionService
     public List<UserDto> getUsersByItemId(String id) {
         List<UserDto> userDtoList = new ArrayList<>();
         for (UserSubscription userSubscription : repository.findAllByItemId(id)) {
-            userDtoList.add(modelMapper.map(userSubscription, getDTOClass()).getUser());
+            userDtoList.add(modelMapper.map(userSubscription.getUser(), userService.getDTOClass()));
         }
         return userDtoList;
     }
 
     public void removeUserSubscription(String itemId, Long userId) {
-        User user = modelMapper.map(userService.getById(userId), userService.getEntityClass());
-        Item item = modelMapper.map(itemService.getById(itemId), itemService.getEntityClass());
+        User user = userService.getUserById(userId);
+        Item item = itemService.getItemById(itemId);
         repository.deleteByItemAndUser(item, user);
     }
 
     public void addUserSubscription(String itemId, Long userId) {
-        this.create(new UserSubscriptionDto(userService.getById(userId), itemService.getById(itemId)));
+        User user = userService.getUserById(userId);
+        Item item = itemService.getItemById(itemId);
+        repository.save(new UserSubscription(user, item));
     }
 
     public List<ItemDto> getItemsByUserId(Long userId) {
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (UserSubscription userSubscription : repository.findAllByUserId(userId)) {
-            itemDtoList.add(modelMapper.map(userSubscription, getDTOClass()).getItem());
+            itemDtoList.add(modelMapper.map(userSubscription.getItem(), itemService.getDTOClass()));
         }
         return itemDtoList;
     }
