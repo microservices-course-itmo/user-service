@@ -23,6 +23,7 @@
         <modelmapper.version>2.3.5</modelmapper.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <springfox-swagger-ui.version>2.9.2</springfox-swagger-ui.version>
+        <swagger-models.version>1.6.1</swagger-models.version>
         <micrometer.version>1.5.2</micrometer.version>
         <postgres.driver.version>42.2.14</postgres.driver.version>
         <logstash.version>4.9</logstash.version>
@@ -87,6 +88,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-swagger-ui.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>${swagger-models.version}</version>
         </dependency>
 
         <dependency>
