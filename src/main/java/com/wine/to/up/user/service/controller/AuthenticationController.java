@@ -34,14 +34,14 @@ public class AuthenticationController {
     private EventLogger eventLogger;
 
     @ApiOperation(value = "User registration",
-            notes = "Description: Creates new user and returns authenticationResponse with token pair",
+            notes = "Description: Creates new user and returns authenticationResponse with token pair. " +
+                "City id can be any number, ignored at the moment.",
             response = AuthenticationResponse.class,
             responseContainer = "ResponseEntity")
     @ApiResponses(
             @ApiResponse(code = 418, message = "Invalid token, provided firebase token cannot be verified"))
     @PostMapping(path = "/registration", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> registration(@RequestBody RegistrationRequestDto requestDto) {
-
         String idToken = requestDto.getFireBaseToken();
         String phoneNumber = jwtTokenProvider.getPhoneNumberFromFirebaseToken(idToken);
 
@@ -54,10 +54,10 @@ public class AuthenticationController {
         userRegistrationDto.setName(requestDto.getName());
         userRegistrationDto.setBirthDate(requestDto.getBirthday());
         userRegistrationDto.setCityId(requestDto.getCityId());
+
         UserDto user = userService.signUp(userRegistrationDto);
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-
         authenticationResponse.setAccessToken(jwtTokenProvider.createToken(user, true));
         authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(user, false));
         authenticationResponse.setUser(modelMapper.map(user, UserResponse.class));
@@ -103,7 +103,10 @@ public class AuthenticationController {
             responseContainer = "ResponseEntity")
     @ApiResponses({
             @ApiResponse(code = 401, message = "Unauthorized, token can not be validated"),
-            @ApiResponse(code = 418, message = "Invalid token type, wrong type's token was provided")})
+            @ApiResponse(code = 418, message = "Invalid token type, wrong type's token was provided"),
+            @ApiResponse(code = 409, message = "Used is already exists")
+    })
+    @PostMapping(path = "/refresh", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> refresh(
             @ApiParam(name = "token", value = "Token for refresh", required = true)
             @RequestParam String refreshToken) {
@@ -133,7 +136,8 @@ public class AuthenticationController {
             notes = "Description: Validates token and returns OK status",
             responseContainer = "ResponseEntity")
     @ApiResponses(
-            @ApiResponse(code = 401, message = "Unauthorized, token was not validated"))
+            @ApiResponse(code = 401, message = "Unauthorized, token was not validated")
+    )
     @PostMapping(path = "/validate", produces = "application/json")
     public ResponseEntity<Void> validate(
             @ApiParam(name = "token", value = "Token for validation", required = true)

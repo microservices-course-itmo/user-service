@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.configuration;
 
+import java.util.Collections;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,7 +29,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .securitySchemes(Arrays.asList(apiKey()));
+                .securitySchemes(Collections.singletonList(apiKey()));
     }
 
     @Override

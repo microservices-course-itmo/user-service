@@ -3,6 +3,7 @@ package com.wine.to.up.user.service.service;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
+import com.wine.to.up.user.service.exception.EntityAlreadyExistsException;
 import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.UserRepository;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
@@ -39,9 +40,14 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
     }
 
     public UserDto signUp(UserRegistrationDto userRegistrationDto) {
+        if (repository.findByPhoneNumber(userRegistrationDto.getPhoneNumber()) != null) {
+            throw new EntityAlreadyExistsException("User", "phone number", userRegistrationDto.getPhoneNumber());
+        }
+
         UserDto userDto = new UserDto();
         userDto.setRole(roleService.getByName("USER"));
         userDto.setPhoneNumber(userRegistrationDto.getPhoneNumber());
+        userDto.setBirthDate(userRegistrationDto.getBirthDate());
         userDto.setIsActivated(true);
         userDto.setCreateDate(Instant.now());
         return this.create(userDto);
