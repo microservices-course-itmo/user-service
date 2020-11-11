@@ -33,4 +33,8 @@ public class ItemService extends AbstractService<String, ItemDto, Item, ItemRepo
     public Class<ItemDto> getDTOClass() {
         return ItemDto.class;
     }
+
+    public Item getItemById(String id) {
+        return repository.findItemById(id);
+    }
 }

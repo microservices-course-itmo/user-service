@@ -65,4 +65,8 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
     public boolean existsByPhoneNumber(String phoneNumber) {
         return repository.findByPhoneNumber(phoneNumber) != null;
     }
+
+    public User getUserById(Long id) {
+        return repository.findUserById(id);
+    }
 }

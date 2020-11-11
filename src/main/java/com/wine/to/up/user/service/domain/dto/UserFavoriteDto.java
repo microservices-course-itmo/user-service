@@ -12,6 +12,6 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class UserFavoriteDto implements AbstractDto<Long> {
-    private User user;
-    private Item item;
+    private UserDto user;
+    private ItemDto item;
 }
