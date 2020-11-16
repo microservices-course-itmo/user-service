@@ -3,8 +3,6 @@ package com.wine.to.up.user.service.controller;
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.ItemDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
-import com.wine.to.up.user.service.domain.entity.Item;
-import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.service.SubscriptionService;
 import com.wine.to.up.user.service.service.UserService;
 import io.swagger.annotations.*;
@@ -17,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,20 +58,16 @@ public class UserController {
 
     @PostMapping(path = "/{userId}/unsubscribe/{itemId}")
     public ResponseEntity<Void> removeUserSubscription(
-//            HttpServletRequest httpServletRequest,
             @PathVariable Long userId,
             @PathVariable String itemId) {
-//        Long userId = userService.getCurrentUserInfo(httpServletRequest).getId();
         subscriptionService.removeUserSubscription(itemId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(path = "/{userId}/subscribe/{itemId}")
     public ResponseEntity<Void> addUserSubscription(
-//            HttpServletRequest httpServletRequest,
             @PathVariable Long userId,
             @PathVariable String itemId) {
-//        Long userId = userService.getCurrentUserInfo(httpServletRequest).getId();
         subscriptionService.addUserSubscription(itemId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
