@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.controller;
 
+import com.wine.to.up.user.service.api.dto.AuthenticationResponse;
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.ItemDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
@@ -41,11 +42,16 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "User info by ID",
+            notes = "Description: REturns information about user by ID",
+            response = UserResponse.class,
+            responseContainer = "ResponseEntity")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findUserInfoByID(@PathVariable Long id) {
         return new ResponseEntity<>(modelMapper.map(userService.getById(id), UserResponse.class), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get info about logged in user", authorizations = { @Authorization(value="jwtToken") })
     @GetMapping("/me")
     public ResponseEntity<UserResponse> findCurrentUserInfo(HttpServletRequest httpServletRequest) {
         return new ResponseEntity<>(
@@ -54,11 +60,17 @@ public class UserController {
         );
     }
 
+    @ApiOperation(value = "User's subscriptions by",
+            notes = "Description: Returns subscription of user by his ID",
+            response = List.class,
+            responseContainer = "ResponseEntity")
     @GetMapping("/{id}/subscriptions")
     public ResponseEntity<List<ItemDto>> findUsersSubscriptions(@PathVariable Long id) {
         return new ResponseEntity<>(subscriptionService.getItemsByUserId(id), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Unsubscribe from wine",
+            notes = "Description: Removes subscription to wine by itemID from user by userID")
     @PostMapping(path = "/{userId}/unsubscribe/{itemId}")
     public ResponseEntity<Void> removeUserSubscription(
 //            HttpServletRequest httpServletRequest,
@@ -69,6 +81,8 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Subscribe to wine",
+            notes = "Description: Adds subscription to wine by itemID from user by userID")
     @PostMapping(path = "/{userId}/subscribe/{itemId}")
     public ResponseEntity<Void> addUserSubscription(
 //            HttpServletRequest httpServletRequest,
