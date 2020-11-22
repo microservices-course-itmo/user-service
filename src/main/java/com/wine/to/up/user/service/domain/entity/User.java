@@ -33,6 +33,9 @@ public class User implements AbstractEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     private LocalDate birthDate;
 
     @Enumerated(EnumType.ORDINAL)

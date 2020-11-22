@@ -1,5 +1,8 @@
 package com.wine.to.up.user.service.security;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import com.wine.to.up.commonlib.annotations.InjectEventLogger;
 import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.user.service.domain.dto.UserDto;
@@ -14,6 +17,8 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -102,5 +107,19 @@ public class JwtTokenProvider {
         }
 
         return true;
+    }
+
+    public String getPhoneNumberFromFirebaseToken(String token) {
+        String phoneNumber;
+
+        try {
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+            phoneNumber = (String) decodedToken.getClaims().get("phone_number");
+        } catch (FirebaseAuthException e) {
+            eventLogger.debug(UserServiceNotableEvents.W_AUTH_FAILURE, "Cannot verify firebase token");
+            return null;
+        }
+
+        return phoneNumber;
     }
 }

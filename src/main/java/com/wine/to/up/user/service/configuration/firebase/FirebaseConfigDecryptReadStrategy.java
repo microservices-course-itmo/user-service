@@ -40,7 +40,6 @@ public class FirebaseConfigDecryptReadStrategy implements FirebaseConfigReadStra
 
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
         byte[] decodedBytes = Base64.getDecoder().decode(cipher.doFinal(bytes));
-        System.out.println(new String(decodedBytes));
         return new ByteArrayInputStream(decodedBytes);
     }
 }
