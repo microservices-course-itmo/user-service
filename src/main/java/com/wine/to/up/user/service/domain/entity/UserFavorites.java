@@ -15,8 +15,8 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Table(name = "list_subscriptions")
-@IdClass(UserSubscriptionPk.class)
-public class UserSubscription implements AbstractEntity<String>, Serializable {
+@IdClass(UserFavoritesPk.class)
+public class UserFavorites implements AbstractEntity<String>, Serializable {
     @Id
     @Column(name = "user_id")
     protected Long userId;
@@ -33,7 +33,7 @@ public class UserSubscription implements AbstractEntity<String>, Serializable {
     @JoinColumn(name = "item_id", referencedColumnName = "id", insertable = false, updatable = false)
     protected Item item;
 
-    public UserSubscription(User user, Item item) {
+    public UserFavorites(User user, Item item) {
         this.user = user;
         this.userId = user.getId();
         this.item = item;

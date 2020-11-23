@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSubscriptionPk implements Serializable {
+public class UserFavoritesPk implements Serializable {
     protected Long userId;
     protected String itemId;
 }
