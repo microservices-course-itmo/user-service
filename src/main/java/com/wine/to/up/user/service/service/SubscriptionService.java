@@ -89,6 +89,10 @@ public class SubscriptionService
     public void addUserSubscription(String itemId, Long userId) {
         User user = userService.getUserById(userId);
         Item item = itemService.getItemById(itemId);
+        if (item == null) {
+            itemService.create(new ItemDto().setId(itemId));
+            item = itemService.getItemById(itemId);
+        }
         repository.save(new UserSubscription(user, item));
     }
 
