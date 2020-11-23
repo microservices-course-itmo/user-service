@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.service;
 
+import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.api.dto.UserTokens;
 import com.wine.to.up.user.service.api.dto.WinePriceUpdatedResponse;
 import com.wine.to.up.user.service.domain.dto.ItemDto;
@@ -8,12 +9,14 @@ import com.wine.to.up.user.service.domain.dto.UserFavoritesDto;
 import com.wine.to.up.user.service.domain.entity.Item;
 import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.domain.entity.UserFavorites;
+import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.UserFavoritesRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -72,10 +75,10 @@ public class FavoritesService
         return userIds;
     }
 
-    public List<UserDto> getUsersByItemId(String id) {
-        List<UserDto> userDtoList = new ArrayList<>();
+    public List<UserResponse> getUsersByItemId(String id) {
+        List<UserResponse> userDtoList = new ArrayList<>();
         for (UserFavorites userFavorites : repository.findAllByItemId(id)) {
-            userDtoList.add(modelMapper.map(userFavorites.getUser(), userService.getDTOClass()));
+            userDtoList.add(modelMapper.map(userFavorites.getUser(), UserResponse.class));
         }
         return userDtoList;
     }
@@ -87,13 +90,15 @@ public class FavoritesService
     }
 
     public void addUserFavoritesItem(String itemId, Long userId) {
-        User user = userService.getUserById(userId);
-        Item item = itemService.getItemById(itemId);
-        if (item == null) {
-            itemService.create(new ItemDto().setId(itemId));
-            item = itemService.getItemById(itemId);
+        UserDto user = userService.getById(userId);
+        ItemDto item;
+        try {
+            item = itemService.getById(itemId);
+        } catch (EntityNotFoundException e) {
+            item = itemService.create(new ItemDto().setId(itemId));
         }
-        repository.save(new UserFavorites(user, item));
+
+        create(new UserFavoritesDto(user, item));
     }
 
     public List<ItemDto> getItemsByUserId(Long userId) {

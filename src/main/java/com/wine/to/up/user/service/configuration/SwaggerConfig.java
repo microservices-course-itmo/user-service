@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
@@ -29,7 +30,27 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .securitySchemes(Collections.singletonList(apiKey()));
+                .securitySchemes(Collections.singletonList(apiKey()))
+                .globalOperationParameters(
+                    Arrays.asList(
+                        new ParameterBuilder()
+                            .name("id")
+                            .description("User id")
+                            .modelRef(new ModelRef("string"))
+                            .required(false)
+                            .parameterType("header")
+                            .defaultValue("1")
+                            .build(),
+                        new ParameterBuilder()
+                            .name("role")
+                            .description("User role")
+                            .modelRef(new ModelRef("string"))
+                            .required(false)
+                            .parameterType("header")
+                            .defaultValue("USER")
+                            .build()
+                    )
+                );
     }
 
     @Override
@@ -43,4 +64,6 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     private ApiKey apiKey() {
         return new ApiKey("jwtToken", "Authorization", "header");
     }
+
+
 }

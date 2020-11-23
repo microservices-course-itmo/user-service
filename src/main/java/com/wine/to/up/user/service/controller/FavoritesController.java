@@ -1,5 +1,7 @@
 package com.wine.to.up.user.service.controller;
 
+import com.wine.to.up.commonlib.security.Auth;
+import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.ItemDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.service.ItemService;
@@ -14,7 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 
 @RestController
@@ -33,39 +38,38 @@ public class FavoritesController {
             response = List.class,
             responseContainer = "ResponseEntity")
     @GetMapping(path = "/{itemId}/users", produces = "application/json")
-    public ResponseEntity<List<UserDto>> findUsersByItemID(
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<UserResponse>> findUsersByItemID(
             @PathVariable String itemId) {
-        List<UserDto> favoritesList = favoritesService.getUsersByItemId(itemId);
+        List<UserResponse> favoritesList = favoritesService.getUsersByItemId(itemId);
         return new ResponseEntity<>(favoritesList, HttpStatus.OK);
     }
-
 
     @ApiOperation(value = "User's favorites",
             notes = "Description: Returns favorites list of user by his ID",
             response = List.class,
             responseContainer = "ResponseEntity")
-    @GetMapping("/{userId}/favorites")
-    public ResponseEntity<List<ItemDto>> findUsersFavorites(@PathVariable Long userId) {
-        return new ResponseEntity<>(favoritesService.getItemsByUserId(userId), HttpStatus.OK);
+    @GetMapping("/")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ItemDto>> findUsersFavorites() {
+        return new ResponseEntity<>(favoritesService.getItemsByUserId(Auth.getUser().getId()), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Remove wine from favorites list",
             notes = "Description: Removes wine position with ID itemId from user's favorites list with ID userID")
-    @PostMapping(path = "/{userId}/remove/{itemId}")
-    public ResponseEntity<Void> removeUserFavoritesItem(
-            @PathVariable Long userId,
-            @PathVariable String itemId) {
-        favoritesService.removeUserFavoritesItem(itemId, userId);
+    @DeleteMapping(path = "/{itemId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> removeUserFavoritesItem(@PathVariable String itemId) {
+        favoritesService.removeUserFavoritesItem(itemId, Auth.getUser().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "Add wine to favorites list",
             notes = "Description: Adds wine position with ID itemId to user's favorites list with ID userID")
-    @PostMapping(path = "/{userId}/add/{itemId}")
-    public ResponseEntity<Void> addUserFavoritesItem(
-            @PathVariable Long userId,
-            @PathVariable String itemId) {
-        favoritesService.addUserFavoritesItem(itemId, userId);
+    @PostMapping(path = "/{itemId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> addUserFavoritesItem(@PathVariable String itemId) {
+        favoritesService.addUserFavoritesItem(itemId, Auth.getUser().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -108,7 +108,7 @@ public class AuthenticationController {
     })
     @PostMapping(path = "/refresh", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> refresh(
-            @ApiParam(name = "token", value = "Token for refresh", required = true)
+            @ApiParam(name = "refreshToken", value = "Token for refresh", required = true)
             @RequestParam String refreshToken) {
         String tokenType = jwtTokenProvider.getTokenType(refreshToken);
 
