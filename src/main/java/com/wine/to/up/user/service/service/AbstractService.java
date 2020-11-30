@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -40,7 +41,7 @@ public abstract class AbstractService
         return modelMapper.map(repository.save(modelMapper.map(entity, getEntityClass())), this.getDTOClass());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, noRollbackFor = EntityNotFoundException.class)
     public D getById(I id) {
         return modelMapper.map(
             repository.findById(id).orElseThrow(

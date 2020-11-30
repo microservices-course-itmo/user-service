@@ -1,6 +1,5 @@
 package com.wine.to.up.user.service.domain.entity;
 
-
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,16 +18,16 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@Table(name = "list_subscriptions")
-@IdClass(ListSubscription.class)
-public class ListSubscription implements AbstractEntity<Long>, Serializable {
+@Table(name = "list_catalogs")
+@IdClass(CatalogItem.class)
+public class CatalogItem implements AbstractEntity<Long>, Serializable {
     @Id
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private User user;
+    @JoinColumn(name = "catalog_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalog catalog;
 
     @Id
     @JoinColumn(name = "item_id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Item item;
 }

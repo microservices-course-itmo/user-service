@@ -1,8 +1,6 @@
 package com.wine.to.up.user.service.domain.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -16,10 +14,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Table(name = "items")
-public class Item implements AbstractEntity<Long> {
+public class Item implements AbstractEntity<String> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String name;
 

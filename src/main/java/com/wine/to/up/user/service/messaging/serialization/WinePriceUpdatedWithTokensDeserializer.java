@@ -1,22 +1,16 @@
 package com.wine.to.up.user.service.messaging.serialization;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.wine.to.up.user.service.api.message.KafkaMessageSentEventOuterClass.KafkaMessageSentEvent;
+import com.wine.to.up.user.service.api.message.WinePriceUpdatedWithTokensEventOuterClass.WinePriceUpdatedWithTokensEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Deserializer;
 
-/**
- * Deserializer for {@link KafkaMessageSentEvent}
- */
 @Slf4j
-public class EventDeserializer implements Deserializer<KafkaMessageSentEvent> {
-    /**
-     * {@inheritDoc}
-     */
+public class WinePriceUpdatedWithTokensDeserializer implements Deserializer<WinePriceUpdatedWithTokensEvent> {
     @Override
-    public KafkaMessageSentEvent deserialize(String topic, byte[] bytes) {
+    public WinePriceUpdatedWithTokensEvent deserialize(String topic, byte[] data) {
         try {
-            return KafkaMessageSentEvent.parseFrom(bytes);
+            return WinePriceUpdatedWithTokensEvent.parseFrom(data);
         } catch (InvalidProtocolBufferException e) {
             log.error("Failed to deserialize message from topic: {}. {}", topic, e);
             return null;
