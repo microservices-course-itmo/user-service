@@ -48,6 +48,7 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
         userDto.setRole(roleService.getByName("USER"));
         userDto.setPhoneNumber(userRegistrationDto.getPhoneNumber());
         userDto.setBirthDate(userRegistrationDto.getBirthDate());
+        userDto.setName(userRegistrationDto.getName());
         userDto.setIsActivated(true);
         userDto.setCreateDate(Instant.now());
         return this.create(userDto);

@@ -74,26 +74,31 @@ public class AuthenticationController {
             @ApiResponse(code = 418, message = "Invalid token, provided firebase token cannot be verified")})
     @PostMapping(path = "/login", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto requestDto) {
+        log.info("Got auth request: " + requestDto);
 
         String idToken = requestDto.getFireBaseToken();
         String phoneNumber = jwtTokenProvider.getPhoneNumberFromFirebaseToken(idToken);
+
+        log.info("phone number from token: " + phoneNumber);
 
         if (phoneNumber == null) {
             return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
         }
 
         if (!userService.existsByPhoneNumber(phoneNumber)) {
+            log.info("user does not exist, 401");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         UserDto user = userService.getByPhoneNumber(phoneNumber);
+        log.info("found user: " + user);
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
         authenticationResponse.setAccessToken(jwtTokenProvider.createToken(user, true));
         authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(user, false));
         authenticationResponse.setUser(modelMapper.map(user, UserResponse.class));
-
+        log.info("response: " + authenticationResponse);
         return ResponseEntity.ok(authenticationResponse);
     }
 
