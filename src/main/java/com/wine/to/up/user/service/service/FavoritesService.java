@@ -89,6 +89,11 @@ public class FavoritesService
         repository.deleteByItemAndUser(item, user);
     }
 
+    public void clearUserFavorites(Long userId) {
+        User user = userService.getUserById(userId);
+        repository.deleteAllByUser(user);
+    }
+
     public void addUserFavoritesItem(String itemId, Long userId) {
         UserDto user = userService.getById(userId);
         ItemDto item;
