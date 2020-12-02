@@ -11,4 +11,5 @@ public interface UserFavoritesRepository extends CrudRepository<UserFavorites, S
     Iterable<UserFavorites> findAllByItemId(String itemId);
     Iterable<UserFavorites> findAllByUserId(Long userId);
     void deleteByItemAndUser(Item item, User user);
+    void deleteAllByUser(User user);
 }
