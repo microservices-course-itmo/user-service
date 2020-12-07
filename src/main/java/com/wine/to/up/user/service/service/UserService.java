@@ -18,15 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService extends AbstractService<Long, UserDto, User, UserRepository> {
     private final RoleService roleService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CityService cityService;
 
     @Autowired
     public UserService(UserRepository repository,
                        ModelMapper modelMapper,
                        RoleService roleService,
-                       JwtTokenProvider jwtTokenProvider) {
+                       JwtTokenProvider jwtTokenProvider, CityService cityService) {
         super(repository, modelMapper);
         this.roleService = roleService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.cityService = cityService;
     }
 
     @Override
@@ -48,6 +50,7 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
         userDto.setRole(roleService.getByName("USER"));
         userDto.setPhoneNumber(userRegistrationDto.getPhoneNumber());
         userDto.setBirthDate(userRegistrationDto.getBirthDate());
+        userDto.setCity(cityService.getById(userRegistrationDto.getCityId()));
         userDto.setName(userRegistrationDto.getName());
         userDto.setIsActivated(true);
         userDto.setCreateDate(Instant.now());
