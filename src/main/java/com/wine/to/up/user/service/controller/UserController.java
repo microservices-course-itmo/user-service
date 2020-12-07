@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.controller;
 
+import com.wine.to.up.commonlib.security.AuthenticationProvider;
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.service.UserService;
@@ -44,9 +45,9 @@ public class UserController {
 
     @ApiOperation(value = "Get info about logged in user", authorizations = { @Authorization(value="jwtToken") })
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> findCurrentUserInfo(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<UserResponse> findCurrentUserInfo() {
         return new ResponseEntity<>(
-            modelMapper.map(userService.getCurrentUserInfo(httpServletRequest), UserResponse.class),
+            modelMapper.map(userService.getById(AuthenticationProvider.getUser().getId()), UserResponse.class),
             HttpStatus.OK
         );
     }
