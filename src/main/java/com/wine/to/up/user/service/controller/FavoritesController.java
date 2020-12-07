@@ -8,6 +8,8 @@ import com.wine.to.up.user.service.service.ItemService;
 import com.wine.to.up.user.service.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +57,17 @@ public class FavoritesController {
     public ResponseEntity<List<ItemDto>> findUsersFavorites() {
         return new ResponseEntity<>(favoritesService.getItemsByUserId(AuthenticationProvider.getUser().getId()),
             HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "User's favorites id list",
+            notes = "Description: Returns list of favorites ID of authenticated user",
+            response = String.class,
+            responseContainer = "List")
+    @GetMapping("/list")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<String>> findUsersFavoritesIds() {
+        return new ResponseEntity<>(favoritesService.getItemsIdsByUserId(AuthenticationProvider.getUser().getId()),
+                HttpStatus.OK);
     }
 
     @ApiOperation(value = "Remove wine from favorites list",

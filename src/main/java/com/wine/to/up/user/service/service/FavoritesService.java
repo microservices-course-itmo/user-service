@@ -113,4 +113,12 @@ public class FavoritesService
         }
         return itemDtoList;
     }
+
+    public List<String> getItemsIdsByUserId(Long userId) {
+        List<String> itemIdsList = new ArrayList<>();
+        for (UserFavorites userFavorites : repository.findAllByUserId(userId)) {
+            itemIdsList.add(userFavorites.getItem().getId());
+        }
+        return itemIdsList;
+    }
 }
