@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 public class RegistrationRequestDto {
