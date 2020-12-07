@@ -50,4 +50,12 @@ public class UserController {
             HttpStatus.OK
         );
     }
+
+    @ApiOperation(value = "Delete user by ID",
+            notes = "Description: Removes user with specified ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserResponse> deleteUserByID(@PathVariable Long id) {
+        userService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
