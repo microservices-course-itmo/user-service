@@ -4,11 +4,10 @@ import com.wine.to.up.commonlib.annotations.InjectEventLogger;
 import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.user.service.api.dto.AuthenticationResponse;
 import com.wine.to.up.user.service.api.dto.UserResponse;
-import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
-import com.wine.to.up.user.service.domain.dto.RegistrationRequestDto;
-import com.wine.to.up.user.service.domain.dto.UserDto;
-import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
+import com.wine.to.up.user.service.domain.dto.*;
+import com.wine.to.up.user.service.domain.entity.City;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
+import com.wine.to.up.user.service.service.CityService;
 import com.wine.to.up.user.service.service.UserService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +25,7 @@ public class AuthenticationController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final CityService cityService;
 
     @Value("${default.jwt.token.stub}")
     private String TOKEN_STUB;
@@ -45,7 +45,11 @@ public class AuthenticationController {
         String idToken = requestDto.getFireBaseToken();
         String phoneNumber = jwtTokenProvider.getPhoneNumberFromFirebaseToken(idToken);
 
-        if (phoneNumber == null) {
+        Long cityId = requestDto.getCityId();
+        CityDto city = cityService.getById(cityId);
+
+        if (phoneNumber == null ||
+                city == null) {
             return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
         }
 
@@ -53,7 +57,7 @@ public class AuthenticationController {
         userRegistrationDto.setPhoneNumber(phoneNumber);
         userRegistrationDto.setName(requestDto.getName());
         userRegistrationDto.setBirthDate(requestDto.getBirthday());
-        userRegistrationDto.setCityId(requestDto.getCityId());
+        userRegistrationDto.setCityId(cityId);
 
         UserDto user = userService.signUp(userRegistrationDto);
 
