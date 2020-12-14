@@ -29,14 +29,21 @@ public class UpdatePriceHandler implements KafkaMessageHandler<UpdatePriceMessag
     public void handle(UpdatePriceMessageSentEvent message) {
         // todo: setFCM and IOS tokens
         List<UserTokens> userTokens = new ArrayList<>();
-        favoritesService.findUserIdsByWineId(message.getId()).forEach(
-            s -> userTokens.add(
-                UserTokens.newBuilder()
-                    .setUserId(s)
-                    .addIosTokens("testIosToken")
-                    .build()
-            )
-        );
+//        favoritesService.findUserIdsByWineId(message.getId()).forEach(
+//            s -> userTokens.add(
+//                UserTokens.newBuilder()
+//                    .setUserId(s)
+//                    .addIosTokens("testIosToken")
+//                    .build()
+//            )
+//        );
+        // todo remove
+        userTokens.add(UserTokens.newBuilder()
+            .setUserId(1L)
+            .addFcmTokens("elKDMqIgQ96O8GjukBv4FB:APA91bGgV-S9FS708ZjQhVP98J3T8Lc-" +
+                "FzITpawvzgEgnpr73x_E4xOB0EGzZIPdyijuWaD5n0q0ItHVZRCFv4gPQnoo7YMBPZ" +
+                "lpPYuNd7o35_mR4745n-m86g_jqyZ_VcE3Xi14qNLI")
+            .build());
 
         wineReviewedEventSender.sendMessage(WinePriceUpdatedWithTokensEvent.newBuilder()
             .setWineId(message.getId())
