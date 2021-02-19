@@ -22,18 +22,29 @@ public class NotificationTokensController {
     public final NotificationTokensService notificationTokensService;
 
     @ApiOperation(value = "Add token to list",
-            notes = "Description: Adds application token to notification tokens list")
+            notes = "Description: Adds application token to notification tokens list of currently logged in user")
     @PostMapping(path = "/")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> addUserFavoritesItem(@PathVariable String token, NotificationTokenType tokenType) {
+    public ResponseEntity<Void> addUserNotificationToken(@RequestParam String token, @RequestParam NotificationTokenType tokenType) {
         notificationTokensService.addNotificationToken(AuthenticationProvider.getUser().getId(), token, tokenType);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{user_id}")
-    public ResponseEntity<Void> addUserFavoritesItemById(@RequestParam Long user_id, @RequestParam String token,
+    @PostMapping(path = "/{userId}")
+    @ApiOperation(value = "Add token to list",
+            notes = "Description: Adds application token to notification tokens list")
+
+    public ResponseEntity<Void> addUserNotificationTokenById(@PathVariable Long userId, @RequestParam String token,
                                                          @RequestParam NotificationTokenType tokenType) {
-        notificationTokensService.addNotificationToken(user_id, token, tokenType);
+        notificationTokensService.addNotificationToken(userId, token, tokenType);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Remove app token from list",
+            notes = "Description: Removes application token from notification tokens list of currently logged in user")
+    @DeleteMapping(path = "/")
+    public ResponseEntity<Void> removeNotificationToken(@RequestParam String token) {
+        notificationTokensService.removeNotificationToken(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

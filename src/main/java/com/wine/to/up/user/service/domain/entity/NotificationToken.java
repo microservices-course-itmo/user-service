@@ -26,5 +26,5 @@ public class NotificationToken implements AbstractEntity<String>, Serializable {
 
     @Column(name = "token_type")
     @Enumerated(EnumType.STRING)
-    private NotificationTokenType token_type;
+    private NotificationTokenType tokenType;
 }
