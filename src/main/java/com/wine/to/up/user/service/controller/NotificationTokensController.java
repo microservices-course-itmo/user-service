@@ -1,7 +1,6 @@
 package com.wine.to.up.user.service.controller;
 
 import com.wine.to.up.commonlib.security.AuthenticationProvider;
-import com.wine.to.up.user.service.domain.entity.NotificationToken;
 import com.wine.to.up.user.service.domain.entity.NotificationTokenType;
 import com.wine.to.up.user.service.service.NotificationTokensService;
 import io.swagger.annotations.Api;

@@ -1,7 +1,5 @@
 package com.wine.to.up.user.service.domain.dto;
 
-import com.wine.to.up.user.service.domain.entity.Item;
-import com.wine.to.up.user.service.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
