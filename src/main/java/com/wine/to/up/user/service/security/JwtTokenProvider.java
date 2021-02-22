@@ -11,15 +11,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider {

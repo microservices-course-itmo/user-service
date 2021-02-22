@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.domain.dto;
 
+import com.wine.to.up.user.service.domain.entity.NotificationTokenType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,8 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class UserFavoriteDto implements AbstractDto<Long> {
-    private UserDto user;
-    private ItemDto item;
+public class NotificationTokenDto implements AbstractDto<String> {
+    private Long userId;
+    private String token;
+    private NotificationTokenType tokenType;
 }
