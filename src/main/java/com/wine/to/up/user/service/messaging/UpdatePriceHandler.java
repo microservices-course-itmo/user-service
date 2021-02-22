@@ -32,7 +32,6 @@ public class UpdatePriceHandler implements KafkaMessageHandler<UpdatePriceMessag
 
     @Override
     public void handle(UpdatePriceMessageSentEvent message) {
-        // todo: setFCM and IOS tokens
         List<UserTokens> userTokens = new ArrayList<>();
         favoritesService.findUserIdsByWineId(message.getId()).forEach(
             s -> userTokens.add(

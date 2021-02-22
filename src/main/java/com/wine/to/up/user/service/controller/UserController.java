@@ -1,7 +1,11 @@
 package com.wine.to.up.user.service.controller;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.UserRecord;
 import com.wine.to.up.commonlib.security.AuthenticationProvider;
 import com.wine.to.up.user.service.api.dto.UserResponse;
+import com.wine.to.up.user.service.domain.dto.UpdateUserInfoRequest;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.service.CityService;
 import com.wine.to.up.user.service.service.UserService;
@@ -56,15 +60,36 @@ public class UserController {
         );
     }
 
-    @ApiOperation(value = "Change user's info",
-            notes = "Description: Updates info about logged in user. Parameters cityId and name are optional and only not null fields will affect user's record")
+    @ApiOperation(
+        value = "Change user's info",
+        notes = "Description: Updates info about logged in user. " +
+                "Parameters cityId and name are optional and only not null fields will affect user's record",
+        authorizations = { @Authorization(value="jwtToken") }
+    )
     @PatchMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> updateUserInfo(Long cityId, String name) {
+    public ResponseEntity<UserResponse> updateUserInfo(@RequestBody UpdateUserInfoRequest updatedUser)
+        throws FirebaseAuthException {
+
         UserDto user = userService.getById(AuthenticationProvider.getUser().getId());
-        if (cityId != null) user.setCity(cityService.getById(cityId));
-        if (name != null) user.setName(name);
+        if (updatedUser.getCityId() != null) {
+            user.setCity(cityService.getById(updatedUser.getCityId()));
+        }
+        if (updatedUser.getName() != null) {
+            user.setName(updatedUser.getName());
+        }
+        if (updatedUser.getPhoneNumber() != null) {
+            final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            final UserRecord userByPhoneNumber = firebaseAuth.getUserByPhoneNumber(user.getPhoneNumber());
+            final UserRecord.UpdateRequest updateRequest = new UserRecord.UpdateRequest(userByPhoneNumber.getUid());
+            updateRequest.setPhoneNumber(updatedUser.getPhoneNumber());
+            firebaseAuth.updateUser(updateRequest);
+            user.setPhoneNumber(updatedUser.getPhoneNumber());
+        }
+        if (updatedUser.getBirthday() != null) {
+            user.setBirthDate(updatedUser.getBirthday());
+        }
         userService.update(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(modelMapper.map(userService.getById(user.getId()), UserResponse.class));
     }
 }

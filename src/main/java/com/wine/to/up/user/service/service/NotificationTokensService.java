@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,10 +40,8 @@ public class NotificationTokensService extends AbstractService<String, Notificat
     }
 
     public List<String> getAllTokensByTypeAndUserId(Long userId, NotificationTokenType tokenType) {
-        List<String> tokens = new ArrayList<>();
-        for (NotificationToken notificationToken : repository.findAllByUserIdAndTokenType(userId, tokenType)) {
-            tokens.add(notificationToken.getToken());
-        }
-        return tokens;
+        return repository.findAllByUserIdAndTokenType(userId, tokenType).stream()
+            .map(NotificationToken::getToken)
+            .collect(Collectors.toList());
     }
 }

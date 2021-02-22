@@ -5,8 +5,10 @@ import com.wine.to.up.user.service.domain.entity.NotificationTokenType;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface NotificationTokensRepository extends CrudRepository<NotificationToken, String> {
-    Iterable<NotificationToken> findAllByUserIdAndTokenType(Long userId, NotificationTokenType tokenType);
+    List<NotificationToken> findAllByUserIdAndTokenType(Long userId, NotificationTokenType tokenType);
     void deleteByToken(String token);
 }
