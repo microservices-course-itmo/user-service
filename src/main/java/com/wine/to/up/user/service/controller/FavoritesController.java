@@ -8,6 +8,8 @@ import com.wine.to.up.user.service.service.ItemService;
 import com.wine.to.up.user.service.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +38,8 @@ public class FavoritesController {
 
     @ApiOperation(value = "Users with wine position in favorites",
         notes = "Description: Returns users having in their favorites list wine position with ID",
-        response = List.class,
-        responseContainer = "ResponseEntity")
+        response = UserResponse.class,
+        responseContainer = "List")
     @GetMapping(path = "/{itemId}/users", produces = "application/json")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<UserResponse>> findUsersByItemID(
@@ -48,13 +50,24 @@ public class FavoritesController {
 
     @ApiOperation(value = "User's favorites",
         notes = "Description: Returns favorites list of authenticated user",
-        response = List.class,
-        responseContainer = "ResponseEntity")
+        response = ItemDto.class,
+        responseContainer = "List")
     @GetMapping("/")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ItemDto>> findUsersFavorites() {
         return new ResponseEntity<>(favoritesService.getItemsByUserId(AuthenticationProvider.getUser().getId()),
             HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "User's favorites id list",
+            notes = "Description: Returns list of favorites ID of authenticated user",
+            response = String.class,
+            responseContainer = "List")
+    @GetMapping("/list")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<String>> findUsersFavoritesIds() {
+        return new ResponseEntity<>(favoritesService.getItemsIdsByUserId(AuthenticationProvider.getUser().getId()),
+                HttpStatus.OK);
     }
 
     @ApiOperation(value = "Remove wine from favorites list",
@@ -63,6 +76,15 @@ public class FavoritesController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> removeUserFavoritesItem(@PathVariable String itemId) {
         favoritesService.removeUserFavoritesItem(itemId, AuthenticationProvider.getUser().getId());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Clear favorites list",
+            notes = "Description: Clears user's favorites list of authenticated user")
+    @DeleteMapping(path = "/clear")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> clearUserFavorites() {
+        favoritesService.clearUserFavorites(AuthenticationProvider.getUser().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

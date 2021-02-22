@@ -23,5 +23,6 @@ public class MappingsConfiguration {
             modelMapper.createTypeMap(UserDto.class, UserResponse.class);
 
         typeMap.addMapping(src -> src.getRole().getName(), UserResponse::setRole);
+        typeMap.addMapping(src -> src.getCity().getId(), UserResponse::setCityId);
     }
 }

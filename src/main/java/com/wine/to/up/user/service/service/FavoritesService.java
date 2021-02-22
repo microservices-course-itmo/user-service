@@ -89,6 +89,11 @@ public class FavoritesService
         repository.deleteByItemAndUser(item, user);
     }
 
+    public void clearUserFavorites(Long userId) {
+        User user = userService.getUserById(userId);
+        repository.deleteAllByUser(user);
+    }
+
     public void addUserFavoritesItem(String itemId, Long userId) {
         UserDto user = userService.getById(userId);
         ItemDto item;
@@ -107,5 +112,13 @@ public class FavoritesService
             itemDtoList.add(modelMapper.map(userFavorites.getItem(), itemService.getDTOClass()));
         }
         return itemDtoList;
+    }
+
+    public List<String> getItemsIdsByUserId(Long userId) {
+        List<String> itemIdsList = new ArrayList<>();
+        for (UserFavorites userFavorites : repository.findAllByUserId(userId)) {
+            itemIdsList.add(userFavorites.getItem().getId());
+        }
+        return itemIdsList;
     }
 }

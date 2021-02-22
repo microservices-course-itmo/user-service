@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.controller;
 
+import com.wine.to.up.commonlib.security.AuthenticationProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
@@ -53,9 +54,9 @@ public class UserController {
     @ApiOperation(value = "Get info about logged in user", authorizations = { @Authorization(value="jwtToken") })
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserResponse> findCurrentUserInfo(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<UserResponse> findCurrentUserInfo() {
         return new ResponseEntity<>(
-            modelMapper.map(userService.getCurrentUserInfo(httpServletRequest), UserResponse.class),
+            modelMapper.map(userService.getById(AuthenticationProvider.getUser().getId()), UserResponse.class),
             HttpStatus.OK
         );
     }
@@ -91,5 +92,13 @@ public class UserController {
         }
         userService.update(user);
         return ResponseEntity.ok(modelMapper.map(userService.getById(user.getId()), UserResponse.class));
+    }
+
+    @ApiOperation(value = "Delete user by ID",
+        notes = "Description: Removes user with specified ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserResponse> deleteUserByID(@PathVariable Long id) {
+        userService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
