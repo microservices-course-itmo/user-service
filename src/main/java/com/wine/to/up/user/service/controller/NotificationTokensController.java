@@ -6,6 +6,7 @@ import com.wine.to.up.user.service.domain.entity.NotificationTokenType;
 import com.wine.to.up.user.service.service.NotificationTokensService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,13 @@ public class NotificationTokensController {
     private final NotificationTokensService notificationTokensService;
 
     @ApiOperation(value = "Add token to list",
-            notes = "Description: Adds application token to notification tokens list of currently logged in user")
+            notes = "Description: Adds application token to notification tokens list of currently logged in user",
+            authorizations = {@Authorization(value = "jwtToken")})
     @PostMapping(path = "/")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> addUserNotificationToken(
-        @RequestParam String token,
-        @RequestParam NotificationTokenType tokenType
+            @RequestParam String token,
+            @RequestParam NotificationTokenType tokenType
     ) {
         notificationTokensService.addNotificationToken(AuthenticationProvider.getUser().getId(), token, tokenType);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -35,19 +37,21 @@ public class NotificationTokensController {
 
     @PostMapping(path = "/{userId}")
     @ApiOperation(value = "Add token to list",
-            notes = "Description: Adds application token to notification tokens list")
+            notes = "Description: Adds application token to notification tokens list",
+            authorizations = {@Authorization(value = "jwtToken")})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> addUserNotificationTokenById(
-        @PathVariable Long userId,
-        @RequestParam String token,
-        @RequestParam NotificationTokenType tokenType
+            @PathVariable Long userId,
+            @RequestParam String token,
+            @RequestParam NotificationTokenType tokenType
     ) {
         notificationTokensService.addNotificationToken(userId, token, tokenType);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "Remove app token from list",
-            notes = "Description: Removes application token from notification tokens list of currently logged in user")
+            notes = "Description: Removes application token from notification tokens list of currently logged in user",
+            authorizations = {@Authorization(value = "jwtToken")})
     @DeleteMapping(path = "/")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> removeNotificationToken(@RequestParam String token) {
