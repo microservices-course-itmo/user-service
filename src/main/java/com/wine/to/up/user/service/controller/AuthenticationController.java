@@ -4,19 +4,28 @@ import com.wine.to.up.commonlib.annotations.InjectEventLogger;
 import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.user.service.api.dto.AuthenticationResponse;
 import com.wine.to.up.user.service.api.dto.UserResponse;
-import com.wine.to.up.user.service.domain.dto.*;
-import com.wine.to.up.user.service.domain.entity.City;
+import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
+import com.wine.to.up.user.service.domain.dto.CityDto;
+import com.wine.to.up.user.service.domain.dto.RegistrationRequestDto;
+import com.wine.to.up.user.service.domain.dto.UserDto;
+import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
 import com.wine.to.up.user.service.service.CityService;
 import com.wine.to.up.user.service.service.UserService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
@@ -34,12 +43,12 @@ public class AuthenticationController {
     private EventLogger eventLogger;
 
     @ApiOperation(value = "User registration",
-            notes = "Description: Creates new user and returns authenticationResponse with token pair. " +
-                "City id can be any number, ignored at the moment.",
-            response = AuthenticationResponse.class,
-            responseContainer = "ResponseEntity")
+        notes = "Description: Creates new user and returns authenticationResponse with token pair. " +
+            "City id can be any number, ignored at the moment.",
+        response = AuthenticationResponse.class,
+        responseContainer = "ResponseEntity")
     @ApiResponses(
-            @ApiResponse(code = 418, message = "Invalid token, provided firebase token cannot be verified"))
+        @ApiResponse(code = 418, message = "Invalid token, provided firebase token cannot be verified"))
     @PostMapping(path = "/registration", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> registration(@RequestBody RegistrationRequestDto requestDto) {
         String idToken = requestDto.getFireBaseToken();
@@ -49,7 +58,7 @@ public class AuthenticationController {
         CityDto city = cityService.getById(cityId);
 
         if (phoneNumber == null ||
-                city == null) {
+            city == null) {
             return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
         }
 
@@ -70,12 +79,12 @@ public class AuthenticationController {
     }
 
     @ApiOperation(value = "Login user",
-            notes = "Description: Authenticates and returns authenticationResponse with tokens pair",
-            response = AuthenticationResponse.class,
-            responseContainer = "ResponseEntity")
+        notes = "Description: Authenticates and returns authenticationResponse with tokens pair",
+        response = AuthenticationResponse.class,
+        responseContainer = "ResponseEntity")
     @ApiResponses({
-            @ApiResponse(code = 401, message = "Unauthorized, no user found by this token"),
-            @ApiResponse(code = 418, message = "Invalid token, provided firebase token cannot be verified")})
+        @ApiResponse(code = 401, message = "Unauthorized, no user found by this token"),
+        @ApiResponse(code = 418, message = "Invalid token, provided firebase token cannot be verified")})
     @PostMapping(path = "/login", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto requestDto) {
         log.info("Got auth request: " + requestDto);
@@ -107,18 +116,18 @@ public class AuthenticationController {
     }
 
     @ApiOperation(value = "refresh",
-            notes = "Description: Returns new tokens pair",
-            response = AuthenticationResponse.class,
-            responseContainer = "ResponseEntity")
+        notes = "Description: Returns new tokens pair",
+        response = AuthenticationResponse.class,
+        responseContainer = "ResponseEntity")
     @ApiResponses({
-            @ApiResponse(code = 401, message = "Unauthorized, token can not be validated"),
-            @ApiResponse(code = 418, message = "Invalid token type, wrong type's token was provided"),
-            @ApiResponse(code = 409, message = "Used is already exists")
+        @ApiResponse(code = 401, message = "Unauthorized, token can not be validated"),
+        @ApiResponse(code = 418, message = "Invalid token type, wrong type's token was provided"),
+        @ApiResponse(code = 409, message = "Used is already exists")
     })
     @PostMapping(path = "/refresh", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> refresh(
-            @ApiParam(name = "refreshToken", value = "Token for refresh", required = true)
-            @RequestParam String refreshToken) {
+        @ApiParam(name = "refreshToken", value = "Token for refresh", required = true)
+        @RequestParam String refreshToken) {
         String tokenType = jwtTokenProvider.getTokenType(refreshToken);
 
         if (!jwtTokenProvider.validateToken(refreshToken) && tokenType.equals("REFRESH_TOKEN")) {
@@ -133,26 +142,26 @@ public class AuthenticationController {
         UserDto user = userService.getByPhoneNumber(phoneNumber);
 
         AuthenticationResponse authenticationResponse =
-                new AuthenticationResponse()
-                        .setAccessToken(jwtTokenProvider.createToken(user, true))
-                        .setRefreshToken(jwtTokenProvider.createToken(user, false))
-                        .setUser(modelMapper.map(user, UserResponse.class));
+            new AuthenticationResponse()
+                .setAccessToken(jwtTokenProvider.createToken(user, true))
+                .setRefreshToken(jwtTokenProvider.createToken(user, false))
+                .setUser(modelMapper.map(user, UserResponse.class));
 
         return ResponseEntity.ok(authenticationResponse);
     }
 
     @ApiOperation(value = "validate",
-            notes = "Description: Validates token and returns OK status",
-            responseContainer = "ResponseEntity")
+        notes = "Description: Validates token and returns OK status",
+        responseContainer = "ResponseEntity")
     @ApiResponses(
-            @ApiResponse(code = 401, message = "Unauthorized, token was not validated")
+        @ApiResponse(code = 401, message = "Unauthorized, token was not validated")
     )
     @PostMapping(path = "/validate", produces = "application/json")
     public ResponseEntity<Void> validate(
-            @ApiParam(name = "token", value = "Token for validation", required = true)
-            @RequestParam String token) {
+        @ApiParam(name = "token", value = "Token for validation", required = true)
+        @RequestParam String token) {
         if (token.equals(TOKEN_STUB) ||
-                jwtTokenProvider.validateToken(token)) {
+            jwtTokenProvider.validateToken(token)) {
             return ResponseEntity.ok().build();
         }
 
