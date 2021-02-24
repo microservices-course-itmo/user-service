@@ -1,5 +1,6 @@
 package com.wine.to.up.user.service.service;
 
+import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
 import com.wine.to.up.user.service.domain.entity.User;
@@ -7,12 +8,15 @@ import com.wine.to.up.user.service.exception.EntityAlreadyExistsException;
 import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.UserRepository;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
-import java.time.Instant;
-import javax.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.Instant;
 
 @Service
 public class UserService extends AbstractService<Long, UserDto, User, UserRepository> {
@@ -78,5 +82,10 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
 
     public User getUserById(Long id) {
         return repository.findUserById(id);
+    }
+
+    public Page<UserResponse> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                         .map(user -> modelMapper.map(user, UserResponse.class));
     }
 }

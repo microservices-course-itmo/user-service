@@ -13,7 +13,6 @@ import com.wine.to.up.user.service.messaging.serialization.UpdatePriceDeserializ
 import com.wine.to.up.user.service.messaging.serialization.UpdatePriceSerializer;
 import com.wine.to.up.user.service.messaging.serialization.WinePriceUpdatedWithTokensDeserializer;
 import com.wine.to.up.user.service.messaging.serialization.WinePriceUpdatedWithTokensSerializer;
-import java.util.Properties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
@@ -26,6 +25,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import java.util.Properties;
 
 @Configuration
 public class KafkaConfiguration {

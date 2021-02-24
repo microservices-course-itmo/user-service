@@ -6,13 +6,14 @@ import com.google.firebase.FirebaseOptions;
 import com.wine.to.up.commonlib.annotations.InjectEventLogger;
 import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.user.service.logging.UserServiceNotableEvents;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.List;
 
 @Component
 public class FirebaseConfiguration {

@@ -2,7 +2,6 @@ package com.wine.to.up.user.service.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wine.to.up.user.service.api.dto.UserResponse;
-import com.wine.to.up.user.service.domain.entity.Role;
 import com.wine.to.up.user.service.domain.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
