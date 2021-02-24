@@ -1,19 +1,19 @@
 package com.wine.to.up.user.service.messaging;
 
-import com.wine.to.up.commonlib.messaging.KafkaMessageHandler;
 import com.wine.to.up.catalog.service.api.message.UpdatePriceMessageSentEventOuterClass.UpdatePriceMessageSentEvent;
+import com.wine.to.up.commonlib.messaging.KafkaMessageHandler;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.message.UserTokensOuterClass.UserTokens;
 import com.wine.to.up.user.service.api.message.WinePriceUpdatedWithTokensEventOuterClass.WinePriceUpdatedWithTokensEvent;
 import com.wine.to.up.user.service.domain.entity.NotificationTokenType;
 import com.wine.to.up.user.service.service.FavoritesService;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.wine.to.up.user.service.service.NotificationTokensService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Slf4j

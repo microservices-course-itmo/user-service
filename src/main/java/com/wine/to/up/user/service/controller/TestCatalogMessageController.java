@@ -2,9 +2,7 @@ package com.wine.to.up.user.service.controller;
 
 import com.wine.to.up.catalog.service.api.message.UpdatePriceMessageSentEventOuterClass;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

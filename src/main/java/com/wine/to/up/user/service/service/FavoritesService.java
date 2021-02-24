@@ -11,13 +11,13 @@ import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.domain.entity.UserFavorites;
 import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.UserFavoritesRepository;
-import java.util.ArrayList;
-import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional

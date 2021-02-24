@@ -2,11 +2,12 @@ package com.wine.to.up.user.service.configuration;
 
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.UserDto;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 @Configuration
 @RequiredArgsConstructor
