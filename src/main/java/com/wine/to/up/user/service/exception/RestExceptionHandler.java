@@ -20,6 +20,11 @@ public class RestExceptionHandler {
         return composeResponse(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(final AuthenticationException exception) {
+        return composeResponse(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
     private ResponseEntity<ErrorResponse> composeResponse(String message, HttpStatus statusCode) {
         return new ResponseEntity<>(
             new ErrorResponse()

@@ -9,6 +9,7 @@ import com.wine.to.up.user.service.domain.dto.CityDto;
 import com.wine.to.up.user.service.domain.dto.RegistrationRequestDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
+import com.wine.to.up.user.service.exception.AuthenticationException;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
 import com.wine.to.up.user.service.service.CityService;
 import com.wine.to.up.user.service.service.UserService;
@@ -57,9 +58,12 @@ public class AuthenticationController {
         Long cityId = requestDto.getCityId();
         CityDto city = cityService.getById(cityId);
 
-        if (phoneNumber == null ||
-            city == null) {
-            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+        if (phoneNumber == null) {
+            throw new AuthenticationException("Phone number is not present in firebase token");
+        }
+
+        if (city == null) {
+            throw new AuthenticationException("Value of city is not valid");
         }
 
         UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
@@ -83,8 +87,8 @@ public class AuthenticationController {
         response = AuthenticationResponse.class,
         responseContainer = "ResponseEntity")
     @ApiResponses({
-        @ApiResponse(code = 401, message = "Unauthorized, no user found by this token"),
-        @ApiResponse(code = 418, message = "Invalid token, provided firebase token cannot be verified")})
+            @ApiResponse(code = 401, message = "Authentication failure. Reason or detailed message in response.")
+    })
     @PostMapping(path = "/login", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto requestDto) {
         log.info("Got auth request: " + requestDto);
@@ -95,12 +99,12 @@ public class AuthenticationController {
         log.info("phone number from token: " + phoneNumber);
 
         if (phoneNumber == null) {
-            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+            throw new AuthenticationException("Phone number is not present in firebase token");
         }
 
         if (!userService.existsByPhoneNumber(phoneNumber)) {
             log.info("user does not exist, 401");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new AuthenticationException("User does not exist");
         }
 
         UserDto user = userService.getByPhoneNumber(phoneNumber);
@@ -120,22 +124,22 @@ public class AuthenticationController {
         response = AuthenticationResponse.class,
         responseContainer = "ResponseEntity")
     @ApiResponses({
-        @ApiResponse(code = 401, message = "Unauthorized, token can not be validated"),
-        @ApiResponse(code = 418, message = "Invalid token type, wrong type's token was provided"),
-        @ApiResponse(code = 409, message = "Used is already exists")
+            @ApiResponse(code = 401, message = "Unauthorized, token is invalid or access token provided instead")
     })
     @PostMapping(path = "/refresh", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> refresh(
-        @ApiParam(name = "refreshToken", value = "Token for refresh", required = true)
-        @RequestParam String refreshToken) {
-        String tokenType = jwtTokenProvider.getTokenType(refreshToken);
+            @ApiParam(name = "refreshToken", value = "Token for refresh", required = true)
+            @RequestParam String refreshToken) {
 
-        if (!jwtTokenProvider.validateToken(refreshToken) && tokenType.equals("REFRESH_TOKEN")) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new AuthenticationException("Invalid token provided");
         }
 
-        if (!tokenType.equals("REFRESH_TOKEN")) {
-            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+        String tokenType = jwtTokenProvider.getTokenType(refreshToken);
+        if (!"REFRESH_TOKEN".equals(tokenType)) {
+            throw new AuthenticationException(
+                "Given token is not a refresh token. Probably you provided access token instead"
+            );
         }
 
         String phoneNumber = jwtTokenProvider.getPhoneNumber(refreshToken);
@@ -160,8 +164,7 @@ public class AuthenticationController {
     public ResponseEntity<Void> validate(
         @ApiParam(name = "token", value = "Token for validation", required = true)
         @RequestParam String token) {
-        if (token.equals(TOKEN_STUB) ||
-            jwtTokenProvider.validateToken(token)) {
+        if (token.equals(TOKEN_STUB) || jwtTokenProvider.validateToken(token)) {
             return ResponseEntity.ok().build();
         }
 
