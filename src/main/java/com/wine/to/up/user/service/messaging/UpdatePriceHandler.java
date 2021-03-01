@@ -39,6 +39,7 @@ public class UpdatePriceHandler implements KafkaMessageHandler<UpdatePriceMessag
                     .setUserId(s)
                     .addAllFcmTokens(notificationTokensService.getAllTokensByTypeAndUserId(s, NotificationTokenType.FCM_TOKEN))
                     .addAllIosTokens(notificationTokensService.getAllTokensByTypeAndUserId(s, NotificationTokenType.IOS_TOKEN))
+                    .addAllExpoTokens(notificationTokensService.getAllTokensByTypeAndUserId(s, NotificationTokenType.EXPO_TOKEN))
                     .build()
             )
         );
