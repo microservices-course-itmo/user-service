@@ -55,7 +55,7 @@ public class AuthenticationController {
 
         if (phoneNumber == null ||
             city == null) {
-            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(new ErrorResponse("wtf", HttpStatus.I_AM_A_TEAPOT.value()));
+            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(new ErrorResponse("No phone number or city", HttpStatus.I_AM_A_TEAPOT.value()));
         }
 
         UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
