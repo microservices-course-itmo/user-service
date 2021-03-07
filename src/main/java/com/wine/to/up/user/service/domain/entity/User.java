@@ -37,6 +37,9 @@ public class User implements AbstractEntity<Long> {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "firebase_id")
+    private String firebaseId;
+
     private LocalDate birthDate;
 
     @Enumerated(EnumType.ORDINAL)

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class UpdateUserInfoRequest {
-    private String phoneNumber;
+    private Boolean isUpdatedPhoneNumber;
     private String name;
     private Long cityId;
     @JsonFormat(pattern = "dd.MM.yyyy", shape = JsonFormat.Shape.STRING)

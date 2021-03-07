@@ -48,4 +48,5 @@ public class UserDto implements AbstractDto<Long> {
     private Boolean isActivated;
     private CompanyDto company;
     private RoleDto role;
+    private String firebaseId;
 }

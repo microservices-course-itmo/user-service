@@ -29,6 +29,7 @@ CREATE TABLE users
     "activated"    boolean,
     "password"     varchar,
     "created_at"   timestamp,
+    "firebase_id"        varchar,
 
 
     CONSTRAINT fk_user_city_id FOREIGN KEY ("city_id") REFERENCES cities ("id"),

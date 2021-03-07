@@ -2,6 +2,7 @@ package com.wine.to.up.user.service.controller;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.wine.to.up.commonlib.security.AuthenticationProvider;
 import com.wine.to.up.user.service.api.dto.UserResponse;
@@ -19,13 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,21 +33,21 @@ public class UserController {
     public final ModelMapper modelMapper;
 
     @ApiOperation(value = "Find user by id",
-        notes = "Description: Returns user and httpStatus OK or error code",
-        response = UserDto.class,
-        responseContainer = "ResponseEntity")
+            notes = "Description: Returns user and httpStatus OK or error code",
+            response = UserDto.class,
+            responseContainer = "ResponseEntity")
     @GetMapping(path = "/{id}/full", produces = "application/json")
     public ResponseEntity<UserDto> findUserByID(
-        @ApiParam(name = "id", value = "User's ID", required = true)
-        @PathVariable Long id) {
+            @ApiParam(name = "id", value = "User's ID", required = true)
+            @PathVariable Long id) {
         UserDto user = userService.getById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @ApiOperation(value = "User info by ID",
-        notes = "Description: Returns information about user by ID",
-        response = UserResponse.class,
-        responseContainer = "ResponseEntity")
+            notes = "Description: Returns information about user by ID",
+            response = UserResponse.class,
+            responseContainer = "ResponseEntity")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findUserInfoByID(@PathVariable Long id) {
         return new ResponseEntity<>(modelMapper.map(userService.getById(id), UserResponse.class), HttpStatus.OK);
@@ -63,20 +58,20 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponse> findCurrentUserInfo() {
         return new ResponseEntity<>(
-            modelMapper.map(userService.getById(AuthenticationProvider.getUser().getId()), UserResponse.class),
-            HttpStatus.OK
+                modelMapper.map(userService.getById(AuthenticationProvider.getUser().getId()), UserResponse.class),
+                HttpStatus.OK
         );
     }
 
     @ApiOperation(
-        value = "Change user's info",
-        notes = "Description: Updates info about logged in user. Only non-null fields will be updated.",
-        authorizations = {@Authorization(value = "jwtToken")}
+            value = "Change user's info",
+            notes = "Description: Updates info about logged in user. Only non-null fields will be updated.",
+            authorizations = {@Authorization(value = "jwtToken")}
     )
     @PatchMapping("/me")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponse> updateUserInfo(@RequestBody UpdateUserInfoRequest updatedUser)
-        throws FirebaseAuthException {
+            throws FirebaseAuthException {
 
         UserDto user = userService.getById(AuthenticationProvider.getUser().getId());
         if (updatedUser.getCityId() != null) {
@@ -85,13 +80,16 @@ public class UserController {
         if (updatedUser.getName() != null) {
             user.setName(updatedUser.getName());
         }
-        if (updatedUser.getPhoneNumber() != null) {
+        if (updatedUser.getIsUpdatedPhoneNumber()) {
             final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-            final UserRecord userByPhoneNumber = firebaseAuth.getUserByPhoneNumber(user.getPhoneNumber());
+            final FirebaseToken fireBaseToken = firebaseAuth.verifyIdToken(user.getFirebaseId());
+            final String phoneNumber = (String) fireBaseToken.getClaims().get("phone_number");
+
+            final UserRecord userByPhoneNumber = firebaseAuth.getUserByPhoneNumber(phoneNumber);
             final UserRecord.UpdateRequest updateRequest = new UserRecord.UpdateRequest(userByPhoneNumber.getUid());
-            updateRequest.setPhoneNumber(updatedUser.getPhoneNumber());
+            updateRequest.setPhoneNumber(phoneNumber);
             firebaseAuth.updateUser(updateRequest);
-            user.setPhoneNumber(updatedUser.getPhoneNumber());
+            user.setPhoneNumber(phoneNumber);
         }
         if (updatedUser.getBirthday() != null) {
             user.setBirthDate(updatedUser.getBirthday());
@@ -101,7 +99,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "Delete user by ID",
-        notes = "Description: Removes user with specified ID")
+            notes = "Description: Removes user with specified ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<UserResponse> deleteUserByID(@PathVariable Long id) {
         userService.deleteById(id);
