@@ -3,8 +3,11 @@ package com.wine.to.up.user.service.controller;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
+import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.commonlib.security.AuthenticationProvider;
 import com.wine.to.up.user.service.api.dto.UserResponse;
+import com.wine.to.up.user.service.api.message.EntityUpdatedMetaOuterClass.EntityUpdatedMeta;
+import com.wine.to.up.user.service.api.message.UserUpdatedEventOuterClass;
 import com.wine.to.up.user.service.domain.dto.UpdateUserInfoRequest;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.service.CityService;
@@ -27,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -36,6 +41,7 @@ public class UserController {
     public final UserService userService;
     public final CityService cityService;
     public final ModelMapper modelMapper;
+    private final KafkaMessageSender<UserUpdatedEventOuterClass.UserUpdatedEvent> messageSender;
 
     @ApiOperation(value = "Find user by id",
         notes = "Description: Returns user and httpStatus OK or error code",
@@ -97,6 +103,20 @@ public class UserController {
             user.setBirthDate(updatedUser.getBirthday());
         }
         userService.update(user);
+        messageSender.sendMessage(
+                UserUpdatedEventOuterClass.UserUpdatedEvent.newBuilder()
+                        .setUserId(user.getId())
+                        .setPhoneNumber(user.getPhoneNumber())
+                        .setName(user.getName())
+                        .setBirthdate(user.getBirthDate().toString())
+                        .setCityId(user.getCity().getId())
+                        .setMeta(EntityUpdatedMeta.newBuilder()
+                                .setOperationTime(new Date().getTime())
+                                .setOperationType(EntityUpdatedMeta.Operation.UPDATE)
+                                .build())
+                        .build()
+        );
+
         return ResponseEntity.ok(modelMapper.map(userService.getById(user.getId()), UserResponse.class));
     }
 
@@ -105,6 +125,15 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<UserResponse> deleteUserByID(@PathVariable Long id) {
         userService.deleteById(id);
+        messageSender.sendMessage(
+                UserUpdatedEventOuterClass.UserUpdatedEvent.newBuilder()
+                        .setUserId(id)
+                        .setMeta(EntityUpdatedMeta.newBuilder()
+                                .setOperationTime(new Date().getTime())
+                                .setOperationType(EntityUpdatedMeta.Operation.DELETE)
+                                .build())
+                        .build()
+        );
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
