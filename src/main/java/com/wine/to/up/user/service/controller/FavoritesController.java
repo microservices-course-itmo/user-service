@@ -1,7 +1,10 @@
 package com.wine.to.up.user.service.controller;
 
+import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.commonlib.security.AuthenticationProvider;
 import com.wine.to.up.user.service.api.dto.UserResponse;
+import com.wine.to.up.user.service.api.message.EntityUpdatedMetaOuterClass.EntityUpdatedMeta;
+import com.wine.to.up.user.service.api.message.FavoritesUpdatedEventOuterClass;
 import com.wine.to.up.user.service.domain.dto.ItemDto;
 import com.wine.to.up.user.service.service.FavoritesService;
 import com.wine.to.up.user.service.service.ItemService;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -35,6 +39,7 @@ public class FavoritesController {
     public final UserService userService;
     public final FavoritesService favoritesService;
     public final ModelMapper modelMapper;
+    private final KafkaMessageSender<FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent> messageSender;
 
     @ApiOperation(value = "Users with wine position in favorites",
             notes = "Description: Returns users having in their favorites list wine position with ID",
@@ -80,6 +85,14 @@ public class FavoritesController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> removeUserFavoritesItem(@PathVariable String itemId) {
         favoritesService.removeUserFavoritesItem(itemId, AuthenticationProvider.getUser().getId());
+        messageSender.sendMessage(FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent.newBuilder()
+                .setUserId(AuthenticationProvider.getUser().getId())
+                .setWineId(itemId)
+                .setMeta(EntityUpdatedMeta.newBuilder()
+                        .setOperationTime(new Date().getTime())
+                        .setOperationType(EntityUpdatedMeta.Operation.DELETE)
+                        .build())
+                .build());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -90,6 +103,13 @@ public class FavoritesController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> clearUserFavorites() {
         favoritesService.clearUserFavorites(AuthenticationProvider.getUser().getId());
+        messageSender.sendMessage(FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent.newBuilder()
+                .setUserId(AuthenticationProvider.getUser().getId())
+                .setMeta(EntityUpdatedMeta.newBuilder()
+                        .setOperationTime(new Date().getTime())
+                        .setOperationType(EntityUpdatedMeta.Operation.CLEAR)
+                        .build())
+                .build());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -100,6 +120,14 @@ public class FavoritesController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> addUserFavoritesItem(@PathVariable String itemId) {
         favoritesService.addUserFavoritesItem(itemId, AuthenticationProvider.getUser().getId());
+        messageSender.sendMessage(FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent.newBuilder()
+                .setUserId(AuthenticationProvider.getUser().getId())
+                .setWineId(itemId)
+                .setMeta(EntityUpdatedMeta.newBuilder()
+                        .setOperationTime(new Date().getTime())
+                        .setOperationType(EntityUpdatedMeta.Operation.CREATE)
+                        .build())
+                .build());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

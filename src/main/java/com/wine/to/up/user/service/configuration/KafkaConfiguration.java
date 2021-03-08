@@ -5,7 +5,8 @@ import com.wine.to.up.catalog.service.api.message.UpdatePriceMessageSentEventOut
 import com.wine.to.up.commonlib.messaging.BaseKafkaHandler;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.UserServiceApiProperties;
-import com.wine.to.up.user.service.api.message.NewUserCreatedEventOuterClass.NewUserCreatedEvent;
+import com.wine.to.up.user.service.api.message.FavoritesUpdatedEventOuterClass;
+import com.wine.to.up.user.service.api.message.UserUpdatedEventOuterClass;
 import com.wine.to.up.user.service.api.message.WinePriceUpdatedWithTokensEventOuterClass.WinePriceUpdatedWithTokensEvent;
 import com.wine.to.up.user.service.components.UserServiceMetricsCollector;
 import com.wine.to.up.user.service.messaging.UpdatePriceHandler;
@@ -116,19 +117,37 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    KafkaMessageSender<NewUserCreatedEvent> newUserCreatedEventSender(
+    KafkaMessageSender<UserUpdatedEventOuterClass.UserUpdatedEvent> userUpdatedEventSender(
             Properties producerProperties,
             UserServiceApiProperties userServiceApiProperties,
             UserServiceMetricsCollector metricsCollector
     ) {
         producerProperties.setProperty(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                NewUserCreatedSerializer.class.getName()
+                UserUpdatedSerializer.class.getName()
         );
 
         return new KafkaMessageSender<>(
                 new KafkaProducer<>(producerProperties),
-                userServiceApiProperties.getNewUserCreatedTopicName(),
+                userServiceApiProperties.getUserUpdatedTopicName(),
+                metricsCollector
+        );
+    }
+
+    @Bean
+    KafkaMessageSender<FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent> favoritesUpdatedEventSender(
+            Properties producerProperties,
+            UserServiceApiProperties userServiceApiProperties,
+            UserServiceMetricsCollector metricsCollector
+    ) {
+        producerProperties.setProperty(
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                FavoritesUpdatedSerializer.class.getName()
+        );
+
+        return new KafkaMessageSender<>(
+                new KafkaProducer<>(producerProperties),
+                userServiceApiProperties.getFavoritesUpdatedTopicName(),
                 metricsCollector
         );
     }

@@ -5,7 +5,8 @@ import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.dto.AuthenticationResponse;
 import com.wine.to.up.user.service.api.dto.UserResponse;
-import com.wine.to.up.user.service.api.message.NewUserCreatedEventOuterClass;
+import com.wine.to.up.user.service.api.message.EntityUpdatedMetaOuterClass.EntityUpdatedMeta;
+import com.wine.to.up.user.service.api.message.UserUpdatedEventOuterClass;
 import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
 import com.wine.to.up.user.service.domain.dto.CityDto;
 import com.wine.to.up.user.service.domain.dto.RegistrationRequestDto;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -38,7 +41,7 @@ public class AuthenticationController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final CityService cityService;
-    private final KafkaMessageSender<NewUserCreatedEventOuterClass.NewUserCreatedEvent> messageSender;
+    private final KafkaMessageSender<UserUpdatedEventOuterClass.UserUpdatedEvent> messageSender;
 
     @Value("${default.jwt.token.stub}")
     private String TOKEN_STUB;
@@ -83,12 +86,16 @@ public class AuthenticationController {
         authenticationResponse.setUser(modelMapper.map(user, UserResponse.class));
 
         messageSender.sendMessage(
-                NewUserCreatedEventOuterClass.NewUserCreatedEvent.newBuilder()
+                UserUpdatedEventOuterClass.UserUpdatedEvent.newBuilder()
                         .setUserId(user.getId())
                         .setPhoneNumber(user.getPhoneNumber())
                         .setName(user.getName())
                         .setBirthdate(user.getBirthDate().toString())
                         .setCityId(user.getCity().getId())
+                        .setMeta(EntityUpdatedMeta.newBuilder()
+                                .setOperationTime(new Date().getTime())
+                                .setOperationType(EntityUpdatedMeta.Operation.CREATE)
+                                .build())
                         .build()
         );
 
