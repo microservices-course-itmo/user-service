@@ -121,4 +121,18 @@ public class JwtTokenProvider {
 
         return phoneNumber;
     }
+
+    public String getFirebaseIdFromToken(String token) {
+        String id;
+
+        try {
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+            id = (String) decodedToken.getClaims().get("user_id");
+        } catch (FirebaseAuthException e) {
+            eventLogger.debug(UserServiceNotableEvents.W_AUTH_FAILURE, "Cannot verify firebase token");
+            return null;
+        }
+
+        return id;
+    }
 }

@@ -46,18 +46,20 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
     }
 
     public UserDto signUp(UserRegistrationDto userRegistrationDto) {
-        if (repository.findByPhoneNumber(userRegistrationDto.getPhoneNumber()) != null) {
-            throw new EntityAlreadyExistsException("User", "phone number", userRegistrationDto.getPhoneNumber());
+        if (repository.findByFirebaseId(userRegistrationDto.getFirebaseId()) != null) {
+            throw new EntityAlreadyExistsException("User", "firebase id", userRegistrationDto.getFirebaseId());
         }
 
         UserDto userDto = new UserDto();
         userDto.setRole(roleService.getByName("USER"));
         userDto.setPhoneNumber(userRegistrationDto.getPhoneNumber());
-        userDto.setBirthDate(userRegistrationDto.getBirthDate());
+        userDto.setBirthdate(userRegistrationDto.getBirthDate());
         userDto.setCity(cityService.getById(userRegistrationDto.getCityId()));
         userDto.setName(userRegistrationDto.getName());
         userDto.setIsActivated(true);
         userDto.setCreateDate(Instant.now());
+        userDto.setFirebaseId(userRegistrationDto.getFirebaseId());
+
         return this.create(userDto);
     }
 
@@ -66,13 +68,21 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
             jwtTokenProvider.resolveToken(httpServletRequest)));
     }
 
-    @Transactional(readOnly = true)
     public UserDto getByPhoneNumber(String phoneNumber) {
         User user = repository.findByPhoneNumber(phoneNumber);
         if (user == null) {
             throw new EntityNotFoundException("User", phoneNumber);
         }
 
+        return modelMapper.map(user, getDTOClass());
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto getByFirebaseId(String id) {
+        User user = repository.findByFirebaseId(id);
+        if (user == null) {
+            return null;
+        }
         return modelMapper.map(user, getDTOClass());
     }
 
