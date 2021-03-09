@@ -11,6 +11,7 @@ import com.wine.to.up.user.service.api.message.UserUpdatedEventOuterClass;
 import com.wine.to.up.user.service.domain.dto.UpdateUserInfoRequest;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.service.CityService;
+import com.wine.to.up.user.service.service.FavoritesService;
 import com.wine.to.up.user.service.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,9 +39,10 @@ import java.util.Date;
 @Slf4j
 @Api(value = "UserController", description = "Operations with users")
 public class UserController {
-    public final UserService userService;
-    public final CityService cityService;
-    public final ModelMapper modelMapper;
+    private final UserService userService;
+    private final FavoritesService favoritesService;
+    private final CityService cityService;
+    private final ModelMapper modelMapper;
     private final KafkaMessageSender<UserUpdatedEventOuterClass.UserUpdatedEvent> messageSender;
 
     @ApiOperation(value = "Find user by id",
@@ -91,16 +93,13 @@ public class UserController {
         if (updatedUser.getName() != null) {
             user.setName(updatedUser.getName());
         }
-        if (updatedUser.getPhoneNumber() != null) {
-            final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-            final UserRecord userByPhoneNumber = firebaseAuth.getUserByPhoneNumber(user.getPhoneNumber());
-            final UserRecord.UpdateRequest updateRequest = new UserRecord.UpdateRequest(userByPhoneNumber.getUid());
-            updateRequest.setPhoneNumber(updatedUser.getPhoneNumber());
-            firebaseAuth.updateUser(updateRequest);
-            user.setPhoneNumber(updatedUser.getPhoneNumber());
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final UserRecord userRecord = firebaseAuth.getUser(user.getFirebaseId());
+        if (!userRecord.getPhoneNumber().equals(user.getPhoneNumber())) {
+            user.setPhoneNumber(userRecord.getPhoneNumber());
         }
         if (updatedUser.getBirthday() != null) {
-            user.setBirthDate(updatedUser.getBirthday());
+            user.setBirthdate(updatedUser.getBirthday());
         }
         userService.update(user);
         messageSender.sendMessage(
@@ -108,7 +107,7 @@ public class UserController {
                         .setUserId(user.getId())
                         .setPhoneNumber(user.getPhoneNumber())
                         .setName(user.getName())
-                        .setBirthdate(user.getBirthDate().toString())
+                        .setBirthdate(user.getBirthdate().toString())
                         .setCityId(user.getCity().getId())
                         .setMeta(EntityUpdatedMeta.newBuilder()
                                 .setOperationTime(new Date().getTime())
@@ -124,6 +123,7 @@ public class UserController {
         notes = "Description: Removes user with specified ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<UserResponse> deleteUserByID(@PathVariable Long id) {
+        favoritesService.clearUserFavorites(id);
         userService.deleteById(id);
         messageSender.sendMessage(
                 UserUpdatedEventOuterClass.UserUpdatedEvent.newBuilder()

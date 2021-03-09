@@ -20,10 +20,7 @@ public class UserRegistrationDto implements AbstractDto<Long> {
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate birthDate;
     private String name;
-    private String sex;
-    private String email;
     private String phoneNumber;
     private Long cityId;
-    private Long companyId;
-    private String password;
+    private String firebaseId;
 }

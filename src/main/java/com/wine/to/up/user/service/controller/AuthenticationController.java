@@ -77,6 +77,7 @@ public class AuthenticationController {
         userRegistrationDto.setName(requestDto.getName());
         userRegistrationDto.setBirthDate(requestDto.getBirthday());
         userRegistrationDto.setCityId(cityId);
+        userRegistrationDto.setFirebaseId(jwtTokenProvider.getFirebaseIdFromToken(idToken));
 
         UserDto user = userService.signUp(userRegistrationDto);
 
@@ -90,7 +91,7 @@ public class AuthenticationController {
                         .setUserId(user.getId())
                         .setPhoneNumber(user.getPhoneNumber())
                         .setName(user.getName())
-                        .setBirthdate(user.getBirthDate().toString())
+                        .setBirthdate(user.getBirthdate().toString())
                         .setCityId(user.getCity().getId())
                         .setMeta(EntityUpdatedMeta.newBuilder()
                                 .setOperationTime(new Date().getTime())
@@ -122,12 +123,25 @@ public class AuthenticationController {
             throw new AuthenticationException("Phone number is not present in firebase token");
         }
 
+        UserDto user;
+        final String idFromToken = jwtTokenProvider.getFirebaseIdFromToken(idToken);
         if (!userService.existsByPhoneNumber(phoneNumber)) {
-            log.info("user does not exist, 401");
-            throw new AuthenticationException("User does not exist");
+            user = userService.getByFirebaseId(idFromToken);
+            if (user != null) {
+                user.setPhoneNumber(phoneNumber);
+                userService.update(user);
+            } else {
+                log.info("user does not exist, 401");
+                throw new AuthenticationException("User does not exist");
+            }
+        } else {
+            user = userService.getByPhoneNumber(phoneNumber);
+            if (user.getFirebaseId() == null) {
+                user.setFirebaseId(idFromToken);
+                userService.update(user);
+            }
         }
 
-        UserDto user = userService.getByPhoneNumber(phoneNumber);
         log.info("found user: " + user);
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();

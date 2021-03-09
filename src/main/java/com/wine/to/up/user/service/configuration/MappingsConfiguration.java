@@ -5,6 +5,7 @@ import com.wine.to.up.user.service.domain.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +17,8 @@ public class MappingsConfiguration {
 
     @PostConstruct
     private void configure() {
+        modelMapper.getConfiguration().setAmbiguityIgnored(true)
+                                      .setMatchingStrategy(MatchingStrategies.STRICT);
         this.configureUserResponseMapping();
     }
 

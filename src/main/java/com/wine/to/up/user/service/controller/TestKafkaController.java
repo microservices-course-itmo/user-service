@@ -8,7 +8,12 @@ import com.wine.to.up.user.service.api.message.UserUpdatedEventOuterClass;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 
@@ -16,6 +21,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Api(value = "Kafka controller", description = "Endpoints for sending test Kafka messages")
 public class TestKafkaController {
+    private static final int FAKE_USER_ID = 999999;
+
     private final KafkaMessageSender<UpdatePriceMessageSentEventOuterClass.UpdatePriceMessageSentEvent> updatePriceMessageSender;
     private final KafkaMessageSender<UserUpdatedEventOuterClass.UserUpdatedEvent> userUpdatedMessageSender;
     private final KafkaMessageSender<FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent> favoritesUpdatedMessageSender;
@@ -39,7 +46,7 @@ public class TestKafkaController {
     public void sendUserCreatedMessage() {
         userUpdatedMessageSender.sendMessage(
                 UserUpdatedEventOuterClass.UserUpdatedEvent.newBuilder()
-                        .setUserId(1)
+                        .setUserId(FAKE_USER_ID)
                         .setPhoneNumber("+79111234567")
                         .setName("Vasya")
                         .setBirthdate("01.01.1990")
@@ -58,7 +65,7 @@ public class TestKafkaController {
     public void sendUserUpdatedMessage() {
         userUpdatedMessageSender.sendMessage(
                 UserUpdatedEventOuterClass.UserUpdatedEvent.newBuilder()
-                        .setUserId(1)
+                        .setUserId(FAKE_USER_ID)
                         .setPhoneNumber("+79111234567")
                         .setName("Ivan")
                         .setBirthdate("01.01.1990")
@@ -77,7 +84,7 @@ public class TestKafkaController {
     public void sendUserDeletedMessage() {
         userUpdatedMessageSender.sendMessage(
                 UserUpdatedEventOuterClass.UserUpdatedEvent.newBuilder()
-                        .setUserId(1)
+                        .setUserId(FAKE_USER_ID)
                         .setMeta(EntityUpdatedMeta.newBuilder()
                                 .setOperationTime(new Date().getTime())
                                 .setOperationType(EntityUpdatedMeta.Operation.DELETE)
@@ -92,7 +99,7 @@ public class TestKafkaController {
     public void sendFavoriteAddedMessage(@PathVariable String itemId) {
         favoritesUpdatedMessageSender.sendMessage(
                 FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent.newBuilder()
-                        .setUserId(1)
+                        .setUserId(FAKE_USER_ID)
                         .setWineId(itemId)
                         .setMeta(EntityUpdatedMeta.newBuilder()
                                 .setOperationTime(new Date().getTime())
@@ -108,7 +115,7 @@ public class TestKafkaController {
     public void sendFavoriteDeletedMessage(@PathVariable String itemId) {
         favoritesUpdatedMessageSender.sendMessage(
                 FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent.newBuilder()
-                        .setUserId(1)
+                        .setUserId(FAKE_USER_ID)
                         .setWineId(itemId)
                         .setMeta(EntityUpdatedMeta.newBuilder()
                                 .setOperationTime(new Date().getTime())
@@ -124,7 +131,7 @@ public class TestKafkaController {
     public void sendAllFavoritesDeletedMessage() {
         favoritesUpdatedMessageSender.sendMessage(
                 FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent.newBuilder()
-                        .setUserId(1)
+                        .setUserId(FAKE_USER_ID)
                         .setMeta(EntityUpdatedMeta.newBuilder()
                                 .setOperationTime(new Date().getTime())
                                 .setOperationType(EntityUpdatedMeta.Operation.CLEAR)
