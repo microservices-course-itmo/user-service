@@ -5,15 +5,13 @@ import com.wine.to.up.catalog.service.api.message.UpdatePriceMessageSentEventOut
 import com.wine.to.up.commonlib.messaging.BaseKafkaHandler;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.UserServiceApiProperties;
+import com.wine.to.up.user.service.api.message.FavoritesUpdatedEventOuterClass;
+import com.wine.to.up.user.service.api.message.UserUpdatedEventOuterClass;
 import com.wine.to.up.user.service.api.message.WinePriceUpdatedWithTokensEventOuterClass.WinePriceUpdatedWithTokensEvent;
 import com.wine.to.up.user.service.components.UserServiceMetricsCollector;
 import com.wine.to.up.user.service.messaging.UpdatePriceHandler;
 import com.wine.to.up.user.service.messaging.WinePriceUpdateWithTokensHandler;
-import com.wine.to.up.user.service.messaging.serialization.UpdatePriceDeserializer;
-import com.wine.to.up.user.service.messaging.serialization.UpdatePriceSerializer;
-import com.wine.to.up.user.service.messaging.serialization.WinePriceUpdatedWithTokensDeserializer;
-import com.wine.to.up.user.service.messaging.serialization.WinePriceUpdatedWithTokensSerializer;
-import java.util.Properties;
+import com.wine.to.up.user.service.messaging.serialization.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
@@ -26,6 +24,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import java.util.Properties;
 
 @Configuration
 public class KafkaConfiguration {
@@ -113,6 +113,42 @@ public class KafkaConfiguration {
             catalogServiceApiProperties.getEventTopic(),
             new KafkaConsumer<>(consumerProperties),
             messageHandler
+        );
+    }
+
+    @Bean
+    KafkaMessageSender<UserUpdatedEventOuterClass.UserUpdatedEvent> userUpdatedEventSender(
+            Properties producerProperties,
+            UserServiceApiProperties userServiceApiProperties,
+            UserServiceMetricsCollector metricsCollector
+    ) {
+        producerProperties.setProperty(
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                UserUpdatedSerializer.class.getName()
+        );
+
+        return new KafkaMessageSender<>(
+                new KafkaProducer<>(producerProperties),
+                userServiceApiProperties.getUserUpdatedTopicName(),
+                metricsCollector
+        );
+    }
+
+    @Bean
+    KafkaMessageSender<FavoritesUpdatedEventOuterClass.FavoritesUpdatedEvent> favoritesUpdatedEventSender(
+            Properties producerProperties,
+            UserServiceApiProperties userServiceApiProperties,
+            UserServiceMetricsCollector metricsCollector
+    ) {
+        producerProperties.setProperty(
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                FavoritesUpdatedSerializer.class.getName()
+        );
+
+        return new KafkaMessageSender<>(
+                new KafkaProducer<>(producerProperties),
+                userServiceApiProperties.getFavoritesUpdatedTopicName(),
+                metricsCollector
         );
     }
 

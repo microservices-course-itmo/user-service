@@ -2,22 +2,36 @@ package com.wine.to.up.user.service.controller;
 
 import com.wine.to.up.commonlib.annotations.InjectEventLogger;
 import com.wine.to.up.commonlib.logging.EventLogger;
+import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.user.service.api.dto.AuthenticationResponse;
 import com.wine.to.up.user.service.api.dto.UserResponse;
+import com.wine.to.up.user.service.api.message.EntityUpdatedMetaOuterClass.EntityUpdatedMeta;
+import com.wine.to.up.user.service.api.message.UserUpdatedEventOuterClass;
 import com.wine.to.up.user.service.domain.dto.AuthenticationRequestDto;
+import com.wine.to.up.user.service.domain.dto.CityDto;
 import com.wine.to.up.user.service.domain.dto.RegistrationRequestDto;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserRegistrationDto;
+import com.wine.to.up.user.service.exception.AuthenticationException;
 import com.wine.to.up.user.service.security.JwtTokenProvider;
+import com.wine.to.up.user.service.service.CityService;
 import com.wine.to.up.user.service.service.UserService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
 
 @RestController
 @Slf4j
@@ -26,6 +40,8 @@ public class AuthenticationController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final CityService cityService;
+    private final KafkaMessageSender<UserUpdatedEventOuterClass.UserUpdatedEvent> messageSender;
 
     @Value("${default.jwt.token.stub}")
     private String TOKEN_STUB;
@@ -35,7 +51,7 @@ public class AuthenticationController {
 
     @ApiOperation(value = "User registration",
             notes = "Description: Creates new user and returns authenticationResponse with token pair. " +
-                "City id can be any number, ignored at the moment.",
+                    "City id can be any number, ignored at the moment.",
             response = AuthenticationResponse.class,
             responseContainer = "ResponseEntity")
     @ApiResponses(
@@ -45,15 +61,23 @@ public class AuthenticationController {
         String idToken = requestDto.getFireBaseToken();
         String phoneNumber = jwtTokenProvider.getPhoneNumberFromFirebaseToken(idToken);
 
+        Long cityId = requestDto.getCityId();
+        CityDto city = cityService.getById(cityId);
+
         if (phoneNumber == null) {
-            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+            throw new AuthenticationException("Phone number is not present in firebase token");
+        }
+
+        if (city == null) {
+            throw new AuthenticationException("Value of city is not valid");
         }
 
         UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
         userRegistrationDto.setPhoneNumber(phoneNumber);
         userRegistrationDto.setName(requestDto.getName());
         userRegistrationDto.setBirthDate(requestDto.getBirthday());
-        userRegistrationDto.setCityId(requestDto.getCityId());
+        userRegistrationDto.setCityId(cityId);
+        userRegistrationDto.setFirebaseId(jwtTokenProvider.getFirebaseIdFromToken(idToken));
 
         UserDto user = userService.signUp(userRegistrationDto);
 
@@ -61,6 +85,20 @@ public class AuthenticationController {
         authenticationResponse.setAccessToken(jwtTokenProvider.createToken(user, true));
         authenticationResponse.setRefreshToken(jwtTokenProvider.createToken(user, false));
         authenticationResponse.setUser(modelMapper.map(user, UserResponse.class));
+
+        messageSender.sendMessage(
+                UserUpdatedEventOuterClass.UserUpdatedEvent.newBuilder()
+                        .setUserId(user.getId())
+                        .setPhoneNumber(user.getPhoneNumber())
+                        .setName(user.getName())
+                        .setBirthdate(user.getBirthdate().toString())
+                        .setCityId(user.getCity().getId())
+                        .setMeta(EntityUpdatedMeta.newBuilder()
+                                .setOperationTime(new Date().getTime())
+                                .setOperationType(EntityUpdatedMeta.Operation.CREATE)
+                                .build())
+                        .build()
+        );
 
         return ResponseEntity.ok(authenticationResponse);
     }
@@ -70,8 +108,8 @@ public class AuthenticationController {
             response = AuthenticationResponse.class,
             responseContainer = "ResponseEntity")
     @ApiResponses({
-            @ApiResponse(code = 401, message = "Unauthorized, no user found by this token"),
-            @ApiResponse(code = 418, message = "Invalid token, provided firebase token cannot be verified")})
+            @ApiResponse(code = 401, message = "Authentication failure. Reason or detailed message in response.")
+    })
     @PostMapping(path = "/login", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto requestDto) {
         log.info("Got auth request: " + requestDto);
@@ -82,15 +120,28 @@ public class AuthenticationController {
         log.info("phone number from token: " + phoneNumber);
 
         if (phoneNumber == null) {
-            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+            throw new AuthenticationException("Phone number is not present in firebase token");
         }
 
+        UserDto user;
+        final String idFromToken = jwtTokenProvider.getFirebaseIdFromToken(idToken);
         if (!userService.existsByPhoneNumber(phoneNumber)) {
-            log.info("user does not exist, 401");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            user = userService.getByFirebaseId(idFromToken);
+            if (user != null) {
+                user.setPhoneNumber(phoneNumber);
+                userService.update(user);
+            } else {
+                log.info("user does not exist, 401");
+                throw new AuthenticationException("User does not exist");
+            }
+        } else {
+            user = userService.getByPhoneNumber(phoneNumber);
+            if (user.getFirebaseId() == null) {
+                user.setFirebaseId(idFromToken);
+                userService.update(user);
+            }
         }
 
-        UserDto user = userService.getByPhoneNumber(phoneNumber);
         log.info("found user: " + user);
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
@@ -107,22 +158,22 @@ public class AuthenticationController {
             response = AuthenticationResponse.class,
             responseContainer = "ResponseEntity")
     @ApiResponses({
-            @ApiResponse(code = 401, message = "Unauthorized, token can not be validated"),
-            @ApiResponse(code = 418, message = "Invalid token type, wrong type's token was provided"),
-            @ApiResponse(code = 409, message = "Used is already exists")
+            @ApiResponse(code = 401, message = "Unauthorized, token is invalid or access token provided instead")
     })
     @PostMapping(path = "/refresh", produces = "application/json")
     public ResponseEntity<AuthenticationResponse> refresh(
             @ApiParam(name = "refreshToken", value = "Token for refresh", required = true)
             @RequestParam String refreshToken) {
-        String tokenType = jwtTokenProvider.getTokenType(refreshToken);
 
-        if (!jwtTokenProvider.validateToken(refreshToken) && tokenType.equals("REFRESH_TOKEN")) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new AuthenticationException("Invalid token provided");
         }
 
-        if (!tokenType.equals("REFRESH_TOKEN")) {
-            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+        String tokenType = jwtTokenProvider.getTokenType(refreshToken);
+        if (!"REFRESH_TOKEN".equals(tokenType)) {
+            throw new AuthenticationException(
+                    "Given token is not a refresh token. Probably you provided access token instead"
+            );
         }
 
         String phoneNumber = jwtTokenProvider.getPhoneNumber(refreshToken);
@@ -147,8 +198,7 @@ public class AuthenticationController {
     public ResponseEntity<Void> validate(
             @ApiParam(name = "token", value = "Token for validation", required = true)
             @RequestParam String token) {
-        if (token.equals(TOKEN_STUB) ||
-                jwtTokenProvider.validateToken(token)) {
+        if (token.equals(TOKEN_STUB) || jwtTokenProvider.validateToken(token)) {
             return ResponseEntity.ok().build();
         }
 

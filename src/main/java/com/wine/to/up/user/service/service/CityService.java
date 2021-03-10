@@ -2,6 +2,7 @@ package com.wine.to.up.user.service.service;
 
 import com.wine.to.up.user.service.domain.dto.CityDto;
 import com.wine.to.up.user.service.domain.entity.City;
+import com.wine.to.up.user.service.exception.EntityNotFoundException;
 import com.wine.to.up.user.service.repository.CityRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,14 @@ public class CityService extends AbstractService<Long, CityDto, City, CityReposi
     @Override
     public Class<CityDto> getDTOClass() {
         return CityDto.class;
+    }
+
+    @Override
+    public CityDto getById(Long id) {
+        try {
+            return super.getById(id);
+        } catch (EntityNotFoundException e) {
+            return null;
+        }
     }
 }
