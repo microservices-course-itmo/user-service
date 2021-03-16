@@ -156,6 +156,13 @@
             <artifactId>catalog-service-api</artifactId>
             <version>${catalog.service.api.version}</version>
         </dependency>
+
+        <!-- Eureka -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>2.2.5.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <!-- Нужен для пуша jar в репозиторий libs-snapshot-local в jfrog artifactory -->
