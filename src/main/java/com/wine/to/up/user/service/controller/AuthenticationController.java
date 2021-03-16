@@ -176,8 +176,8 @@ public class AuthenticationController {
             );
         }
 
-        String phoneNumber = jwtTokenProvider.getPhoneNumber(refreshToken);
-        UserDto user = userService.getByPhoneNumber(phoneNumber);
+        String id = jwtTokenProvider.getId(refreshToken);
+        UserDto user = userService.getById(Long.parseLong(id));
 
         AuthenticationResponse authenticationResponse =
                 new AuthenticationResponse()
