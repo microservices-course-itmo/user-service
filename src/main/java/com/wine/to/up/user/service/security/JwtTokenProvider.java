@@ -77,6 +77,14 @@ public class JwtTokenProvider {
             .get("phone_number");
     }
 
+    public String getId(String token) {
+        return (String) Jwts.parser()
+                .setSigningKey(secretEncoded)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id");
+    }
+
     public String getTokenType(String token) {
         return (String) Jwts.parser()
             .setSigningKey(secretEncoded)
