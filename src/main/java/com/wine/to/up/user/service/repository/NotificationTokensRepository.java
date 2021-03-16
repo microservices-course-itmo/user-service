@@ -11,4 +11,5 @@ import java.util.List;
 public interface NotificationTokensRepository extends JpaRepository<NotificationToken, String> {
     List<NotificationToken> findAllByUserIdAndTokenType(Long userId, NotificationTokenType tokenType);
     void deleteByToken(String token);
+    List<NotificationToken> findAllByUserId(Long userId);
 }

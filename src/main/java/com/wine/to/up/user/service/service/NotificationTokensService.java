@@ -44,4 +44,11 @@ public class NotificationTokensService extends AbstractService<String, Notificat
             .map(NotificationToken::getToken)
             .collect(Collectors.toList());
     }
+
+    public List<NotificationTokenDto> getAllByUserId(Long userId) {
+        return repository.findAllByUserId(userId)
+            .stream()
+            .map(notificationToken -> modelMapper.map(notificationToken, getDTOClass()))
+            .collect(Collectors.toList());
+    }
 }

@@ -2,22 +2,28 @@ package com.wine.to.up.user.service.controller;
 
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.controller.util.ApiPageParams;
+import com.wine.to.up.user.service.domain.dto.NotificationTokenDto;
 import com.wine.to.up.user.service.domain.dto.PagedUserResponse;
+import com.wine.to.up.user.service.service.NotificationTokensService;
 import com.wine.to.up.user.service.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/internal/users")
 @RequiredArgsConstructor
 public class UserInternalController {
     private final UserService userService;
+    private final NotificationTokensService tokensService;
 
     @GetMapping
     @ApiOperation(value = "Get all users batch")
@@ -34,5 +40,11 @@ public class UserInternalController {
         response.setTotalPages(userResponsePage.getTotalPages());
 
         return response;
+    }
+
+    @GetMapping("/{id}/tokens")
+    @ApiOperation(value = "Get all users' tokens")
+    public List<NotificationTokenDto> getUserTokens(@PathVariable Long id) {
+        return tokensService.getAllByUserId(id);
     }
 }
