@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService extends AbstractService<Long, UserDto, User, UserRepository> {
@@ -97,5 +99,9 @@ public class UserService extends AbstractService<Long, UserDto, User, UserReposi
     public Page<UserResponse> findAll(Pageable pageable) {
         return repository.findAll(pageable)
                          .map(user -> modelMapper.map(user, UserResponse.class));
+    }
+
+    public List<UserDto> getAll() {
+        return repository.findAll().stream().map(user -> modelMapper.map(user, getDTOClass())).collect(Collectors.toList());
     }
 }
