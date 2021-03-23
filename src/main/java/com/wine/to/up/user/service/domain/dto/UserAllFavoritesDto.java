@@ -12,6 +12,6 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 public class UserAllFavoritesDto implements AbstractDto<Long> {
-    private UserDto userDto;
-    private List<ItemDto> itemDtos;
+    private Long userId;
+    private List<String> favoriteIds;
 }

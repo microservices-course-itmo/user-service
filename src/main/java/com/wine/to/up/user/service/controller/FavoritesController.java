@@ -6,7 +6,6 @@ import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.api.message.EntityUpdatedMetaOuterClass.EntityUpdatedMeta;
 import com.wine.to.up.user.service.api.message.FavoritesUpdatedEventOuterClass;
 import com.wine.to.up.user.service.domain.dto.ItemDto;
-import com.wine.to.up.user.service.domain.dto.UserAllFavoritesDto;
 import com.wine.to.up.user.service.service.FavoritesService;
 import com.wine.to.up.user.service.service.ItemService;
 import com.wine.to.up.user.service.service.UserService;
@@ -19,11 +18,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -126,22 +129,5 @@ public class FavoritesController {
                         .build())
                 .build());
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "All users with their favourites items",
-            notes = "Description: Returns all users with their favourites items",
-            response = UserAllFavoritesDto.class,
-            responseContainer = "List",
-            authorizations = {@Authorization(value = "jwtToken")})
-    @GetMapping(path = "/users/all")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<UserAllFavoritesDto>> getFavoritesForAllUsers() {
-        List<UserAllFavoritesDto> favoritesForAllUsers = userService.getAll().stream()
-                .map(userDto -> new UserAllFavoritesDto()
-                        .setUserDto(userDto)
-                        .setItemDtos(favoritesService.getItemsByUserId(userDto.getId())))
-                .collect(Collectors.toList());
-
-        return new ResponseEntity<>(favoritesForAllUsers, HttpStatus.OK);
     }
 }
