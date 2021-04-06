@@ -3,6 +3,7 @@ package com.wine.to.up.user.service.configuration;
 import com.wine.to.up.user.service.api.dto.UserResponse;
 import com.wine.to.up.user.service.domain.dto.UserDto;
 import com.wine.to.up.user.service.domain.dto.UserFavoritesDto;
+import com.wine.to.up.user.service.domain.entity.User;
 import com.wine.to.up.user.service.domain.entity.UserFavorites;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,6 +24,7 @@ public class MappingsConfiguration {
                                       .setMatchingStrategy(MatchingStrategies.STRICT);
         this.configureUserResponseMapping();
         this.configureFavoritesMapping();
+        this.configureUserMapping();
     }
 
     private void configureUserResponseMapping() {
@@ -38,5 +40,14 @@ public class MappingsConfiguration {
                 modelMapper.createTypeMap(UserFavoritesDto.class, UserFavorites.class);
         typeMap.addMapping(src -> src.getItem().getId(), UserFavorites::setItemId);
         typeMap.addMapping(src -> src.getUser().getId(), UserFavorites::setUserId);
+    }
+
+    private void configureUserMapping() {
+        TypeMap<User, UserResponse> typeMap =
+            modelMapper.createTypeMap(User.class, UserResponse.class);
+
+        typeMap.addMapping(User::getId, UserResponse::setId);
+        typeMap.addMapping(src -> src.getCity().getId(), UserResponse::setCityId);
+        typeMap.addMapping(src -> src.getRole().getName(), UserResponse::setRole);
     }
 }
