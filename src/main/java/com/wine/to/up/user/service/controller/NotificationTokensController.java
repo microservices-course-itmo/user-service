@@ -1,7 +1,6 @@
 package com.wine.to.up.user.service.controller;
 
 import com.wine.to.up.commonlib.security.AuthenticationProvider;
-import com.wine.to.up.user.service.domain.dto.NotificationTokenDto;
 import com.wine.to.up.user.service.domain.entity.NotificationTokenType;
 import com.wine.to.up.user.service.service.NotificationTokensService;
 import io.swagger.annotations.Api;
@@ -60,11 +59,8 @@ public class NotificationTokensController {
     @DeleteMapping(path = "/")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> removeNotificationToken(@RequestParam String token) {
-        final NotificationTokenDto byId = notificationTokensService.getById(token);
-        if (!byId.getUserId().equals(AuthenticationProvider.getUser().getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        notificationTokensService.removeNotificationToken(token);
+        final Long userId = AuthenticationProvider.getUser().getId();
+        notificationTokensService.removeNotificationToken(token, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

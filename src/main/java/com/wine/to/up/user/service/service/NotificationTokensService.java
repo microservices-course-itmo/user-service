@@ -35,8 +35,8 @@ public class NotificationTokensService extends AbstractService<String, Notificat
         this.create(new NotificationTokenDto(userId, token, tokenType));
     }
 
-    public void removeNotificationToken(String token) {
-        repository.deleteByToken(token);
+    public void removeNotificationToken(String token, Long userId) {
+        repository.deleteByTokenAndUserId(token, userId);
     }
 
     public List<String> getAllTokensByTypeAndUserId(Long userId, NotificationTokenType tokenType) {
