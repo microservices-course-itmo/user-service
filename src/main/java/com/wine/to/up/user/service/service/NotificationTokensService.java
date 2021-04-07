@@ -51,4 +51,8 @@ public class NotificationTokensService extends AbstractService<String, Notificat
             .map(notificationToken -> modelMapper.map(notificationToken, getDTOClass()))
             .collect(Collectors.toList());
     }
+
+    public boolean existsByTokenAndUserId(String token, Long userId) {
+        return repository.existsByTokenAndUserId(token, userId);
+    }
 }

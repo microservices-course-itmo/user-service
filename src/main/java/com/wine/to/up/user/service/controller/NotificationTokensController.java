@@ -12,11 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +55,20 @@ public class NotificationTokensController {
     ) {
         notificationTokensService.addNotificationToken(userId, token, tokenType);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    @ApiOperation(value = "Checks if user has specified token", authorizations = @Authorization(value = "jwtToken"))
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Map<String, Object>> checkUserToken(@RequestParam String token) {
+        final Long userId = AuthenticationProvider.getUser().getId();
+        final boolean exists = notificationTokensService.existsByTokenAndUserId(token, userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("exists", exists);
+
+        return ResponseEntity.ok(response);
     }
 
     @ApiOperation(value = "Remove app token from list",

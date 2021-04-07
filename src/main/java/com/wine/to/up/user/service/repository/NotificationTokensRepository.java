@@ -12,4 +12,5 @@ public interface NotificationTokensRepository extends JpaRepository<Notification
     List<NotificationToken> findAllByUserIdAndTokenType(Long userId, NotificationTokenType tokenType);
     void deleteByTokenAndUserId(String token, Long userId);
     List<NotificationToken> findAllByUserId(Long userId);
+    boolean existsByTokenAndUserId(String token, Long userId);
 }
